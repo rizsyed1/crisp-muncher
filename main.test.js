@@ -1,19 +1,25 @@
 let faceRadius, faceY, dFaceY, upPressed, downPressed 
-const {createCanvas, loadImage} = require('canvas')
+const { createCanvas, loadImage } = require('canvas')
 const canvas = createCanvas(480, 320)
 const ctx = canvas.getContext('2d');
+faceRadius = 20;
+let canvasLength = 480;
+let canvasWidth = 320; 
+let pringleHeight = 20;
+let pringleWidth = 50;
+
 ctx.fillStyle = '#66cccc';
 ctx.fillRect(10, 10, 480, 320);
-faceRadius = 20;
 
-
+document.body.innerHTML =
+    '<canvas id="canvas" width="480" height="320"></canvas>' +
+    '<script src="main.js"></script>';
 
 const keyDownHandler = jest.fn(e => {
     if (e.keyCode === 38) {
         upPressed = true; 
     }
     else if (e.keyCode === 40) {
-        console.log('downPressed is true now')
         downPressed = true;
     }
 })
@@ -23,13 +29,13 @@ const keyUpHandler = jest.fn(e => {
         upPressed = false;
     }
     else if (e.keyCode === 40) {
-        console.log('downPressed is false now')
         downPressed = false;
     }
 });
 
 const draw = jest.fn(() => {
     drawFace();
+    drawPringle();
     requestAnimationFrame(draw);
 
     if (upPressed === true) {
@@ -53,11 +59,13 @@ const drawFace = jest.fn(() => {
     ctx.closePath();
 });
 
+const drawPringle = jest.fn(() => {
+    loadImage('pringle.png').then((img) => {
+        ctx.drawImage(img, canvasLength - 60, canvasWidth/2, pringleWidth, pringleHeight)  
+    })
+})
 
 beforeEach(() => {
-    document.body.innerHTML =
-            '<canvas id="canvas" width="480" height="320"></canvas>' +
-            '<script src="main.js"></script>';
     faceY = 155
     dFaceY = 10;
     upPressed = false;
@@ -67,15 +75,12 @@ beforeEach(() => {
 });
 
 test ('pressing the up arrow key moves the face up & letting go of up arrow key leaves face in position', () => {
-    console.log(faceY)
     let event = new KeyboardEvent('keydown', {keyCode: 38})
     document.dispatchEvent(event);
     draw();
-    console.log(faceY)
     let event2 = new KeyboardEvent('keyup', {keyCode: 38})
     document.dispatchEvent(event2);
     draw();
-    console.log(faceY)
     expect(faceY).toBe(145);
 })
 
@@ -89,15 +94,11 @@ test ('face will not move beyond top canvas border', () => {
 })
 
 test('pressing the down arrow key moves the face down & letting go of down arrow key leaves face in position', () => {
-    console.log(faceY)
     let event = new KeyboardEvent('keydown', {keyCode: 40})
     document.dispatchEvent(event);
     draw();
-    console.log(faceY)
     let event2 = new KeyboardEvent('keyup', {keyCode: 40});
     document.dispatchEvent(event2); 
     draw();
-    console.log(faceY)
     expect(faceY).toBe(165);
 })
-
