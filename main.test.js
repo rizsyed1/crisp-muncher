@@ -7,6 +7,9 @@ let canvasLength = 480;
 let canvasWidth = 320; 
 let pringleHeight = 20;
 let pringleWidth = 50;
+let pringleStartingXValue = canvasLength - 60;
+let pringleCurrentXValue = pringleStartingXValue;
+let dPringle = 5;
 
 ctx.fillStyle = '#66cccc';
 ctx.fillRect(10, 10, 480, 320);
@@ -61,7 +64,22 @@ const drawFace = jest.fn(() => {
 
 const drawPringle = jest.fn(() => {
     loadImage('pringle.png').then((img) => {
-        ctx.drawImage(img, canvasLength - 60, canvasWidth/2, pringleWidth, pringleHeight)  
+        if (pringleCurrentXValue !== 10) {
+            console.log('drawPringle() if option')
+            ctx.drawImage(img, pringleCurrentXValue, canvasWidth/2, pringleWidth, pringleHeight)
+            pringleCurrentXValue -= dPringle
+        }
+        else {
+            console.log('drawPringle() else option')
+            Object.defineProperty(window, 'alert', {
+                configurable: true,
+              });
+            window.alert = jest.fn();
+
+            alert('You lost. Start again')
+            pringleCurrentXValue = 9;
+            console.log(`in drawPringle(), pringleCurrentXValue is ${pringleCurrentXValue} after alert`)
+        }
     })
 })
 
@@ -101,4 +119,19 @@ test('pressing the down arrow key moves the face down & letting go of down arrow
     document.dispatchEvent(event2); 
     draw();
     expect(faceY).toBe(165);
+})
+
+test ('the pringle moves towards the face', () => {
+    draw() 
+    expect(pringleCurrentXValue).toBeLessThan(pringleStartingXValue);
+})
+
+test('the user receives an loss alert if the pringle is missed', done => {
+    jest.spyOn(window, 'alert');
+    pringleCurrentXValue = 10
+    console.log('accessing drawPringle()')
+    
+    drawPringle()
+    expect(window.alert).toBeCalledTimes(1)
+    
 })
