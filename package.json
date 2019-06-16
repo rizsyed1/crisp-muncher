@@ -1,7 +1,8 @@
 {
   "dependencies": {
     "canvas": "^2.5.0",
-    "jest": "^24.8.0"
+    "jest": "^24.8.0",
+    "jest-dom": "^3.5.0"
   },
   "scripts": {
     "test": "jest"

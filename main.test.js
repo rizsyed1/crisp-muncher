@@ -1,22 +1,33 @@
 let faceRadius, faceY, dFaceY, upPressed, downPressed 
+
 const { createCanvas, loadImage } = require('canvas')
-const canvas = createCanvas(480, 320)
+const canvas = createCanvas(520, 320)
 const ctx = canvas.getContext('2d');
+
 faceRadius = 20;
-let canvasLength = 480;
+let canvasLength = 520;
 let canvasWidth = 320; 
+let canvasStartX = 0
+let canvasStartY = 0
+
 let pringleHeight = 20;
 let pringleWidth = 50;
-let pringleStartingXValue = canvasLength - 60;
+let pringleStartingXValue = canvasLength + 60;
 let pringleCurrentXValue = pringleStartingXValue;
 let dPringle = 5;
 
 ctx.fillStyle = '#66cccc';
-ctx.fillRect(10, 10, 480, 320);
+ctx.fillRect(canvasStartX, canvasStartY, 520, 320);
 
 document.body.innerHTML =
-    '<canvas id="canvas" width="480" height="320"></canvas>' +
-    '<script src="main.js"></script>';
+    '<canvas id="canvas" width="520" height="320"></canvas>' +
+    '<script src="main.js"></script>'+
+    "<div class='modal'>"+
+    "<div class='modal-content'>"+
+    "<button class='play-again-button'></span>"+
+        "<h1>Play Again</h1>"+
+    "</div>"+
+    "</div>"
 
 const keyDownHandler = jest.fn(e => {
     if (e.keyCode === 38) {
@@ -35,6 +46,7 @@ const keyUpHandler = jest.fn(e => {
         downPressed = false;
     }
 });
+
 
 const draw = jest.fn(() => {
     drawFace();
@@ -64,10 +76,11 @@ const drawFace = jest.fn(() => {
 
 const drawPringle = jest.fn(() => {
     loadImage('pringle.png').then((img) => {
-        if (pringleCurrentXValue !== 10) {
+        if (pringleCurrentXValue !== 0) {
             console.log('drawPringle() if option')
-            ctx.drawImage(img, pringleCurrentXValue, canvasWidth/2, pringleWidth, pringleHeight)
             pringleCurrentXValue -= dPringle
+            console.log(pringleCurrentXValue)
+            ctx.drawImage(img, pringleCurrentXValue, canvasWidth/2, pringleWidth, pringleHeight)
         }
         else {
             console.log('drawPringle() else option')
@@ -87,9 +100,14 @@ beforeEach(() => {
     faceY = 155
     dFaceY = 10;
     upPressed = false;
-    downPressed = false;   
+    downPressed = false;  
     document.addEventListener('keydown', keyDownHandler, false);
     document.addEventListener('keyup', keyUpHandler, false);
+    pringleHeight = 20;
+    pringleWidth = 50;
+    pringleStartingXValue = canvasLength + 60;
+    pringleCurrentXValue = pringleStartingXValue;
+    dPringle = 5;
 });
 
 test ('pressing the up arrow key moves the face up & letting go of up arrow key leaves face in position', () => {
@@ -103,12 +121,13 @@ test ('pressing the up arrow key moves the face up & letting go of up arrow key 
 })
 
 test ('face will not move beyond top canvas border', () => {
-    faceY = 15;
-    let event = new KeyboardEvent('keydown', {keyCode: 38});
-    document.dispatchEvent(event); 
-    draw()
-    expect(faceY).toBe(15);
-    
+    faceY = 5;
+    loadImage('pringle.png').then((img) => {
+        let event = new KeyboardEvent('keydown', ctx.drawImage(img, pringleCurrentXValue, canvasWidth/2, pringleWidth, pringleHeight));
+        document.dispatchEvent(event); 
+        draw()
+        expect(faceY).toBe(5);
+    })
 })
 
 test('pressing the down arrow key moves the face down & letting go of down arrow key leaves face in position', () => {
@@ -121,17 +140,12 @@ test('pressing the down arrow key moves the face down & letting go of down arrow
     expect(faceY).toBe(165);
 })
 
-test ('the pringle moves towards the face', () => {
-    draw() 
-    expect(pringleCurrentXValue).toBeLessThan(pringleStartingXValue);
-})
+// test('the pringle moves towards the face', () => {
+//  figure out how to test that the pringle moves left after every invocation of draw()
+// })
 
-test('the user receives an loss alert if the pringle is missed', done => {
-    jest.spyOn(window, 'alert');
-    pringleCurrentXValue = 10
-    console.log('accessing drawPringle()')
-    
-    drawPringle()
-    expect(window.alert).toBeCalledTimes(1)
-    
+test('the modal appears when the pringle passes the face', () => {
+    pringleCurrentXValue = 1
+    draw() 
+    expect()
 })
