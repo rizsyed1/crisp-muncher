@@ -1,8 +1,12 @@
+
+
 let faceRadius, faceY, dFaceY, upPressed, downPressed 
 
 const { createCanvas, loadImage } = require('canvas')
 const canvas = createCanvas(520, 320)
 const ctx = canvas.getContext('2d');
+
+
 
 faceRadius = 20;
 let canvasLength = 520;
@@ -19,15 +23,6 @@ let dPringle = 5;
 ctx.fillStyle = '#66cccc';
 ctx.fillRect(canvasStartX, canvasStartY, 520, 320);
 
-document.body.innerHTML =
-    '<canvas id="canvas" width="520" height="320"></canvas>' +
-    '<script src="main.js"></script>'+
-    "<div class='modal'>"+
-    "<div class='modal-content'>"+
-    "<button class='play-again-button'></span>"+
-        "<h1>Play Again</h1>"+
-    "</div>"+
-    "</div>"
 
 const keyDownHandler = jest.fn(e => {
     if (e.keyCode === 38) {
@@ -65,6 +60,20 @@ const draw = jest.fn(() => {
     }
 })
 
+const youLost = jest.fn(() => {
+    toggleModal()
+    pringleCurrentXValue = pringleCurrentXValue - 1
+    
+})
+
+const toggleModal = jest.fn(() => {
+    let modal = document.getElementById('modal')
+    modal.classList.toggle('show-modal')
+    if (modal.className === 'modal') {
+        document.location.reload();
+    }
+})
+
 const drawFace = jest.fn(() => {
     ctx.beginPath();
     ctx.arc(30, faceY, faceRadius, Math.PI*2.2 , Math.PI*1.8);
@@ -77,21 +86,11 @@ const drawFace = jest.fn(() => {
 const drawPringle = jest.fn(() => {
     loadImage('pringle.png').then((img) => {
         if (pringleCurrentXValue !== 0) {
-            console.log('drawPringle() if option')
             pringleCurrentXValue -= dPringle
-            console.log(pringleCurrentXValue)
             ctx.drawImage(img, pringleCurrentXValue, canvasWidth/2, pringleWidth, pringleHeight)
         }
         else {
-            console.log('drawPringle() else option')
-            Object.defineProperty(window, 'alert', {
-                configurable: true,
-              });
-            window.alert = jest.fn();
-
-            alert('You lost. Start again')
-            pringleCurrentXValue = 9;
-            console.log(`in drawPringle(), pringleCurrentXValue is ${pringleCurrentXValue} after alert`)
+            youLost()
         }
     })
 })
@@ -110,7 +109,7 @@ beforeEach(() => {
     dPringle = 5;
 });
 
-test ('pressing the up arrow key moves the face up & letting go of up arrow key leaves face in position', () => {
+test ('pressing the up arrow key movedraws the face up & letting go of up arrow key leaves face in position', () => {
     let event = new KeyboardEvent('keydown', {keyCode: 38})
     document.dispatchEvent(event);
     draw();
@@ -141,11 +140,9 @@ test('pressing the down arrow key moves the face down & letting go of down arrow
 })
 
 // test('the pringle moves towards the face', () => {
-//  figure out how to test that the pringle moves left after every invocation of draw()
+//   test that the pringle moves left after every invocation of draw()
 // })
 
-test('the modal appears when the pringle passes the face', () => {
-    pringleCurrentXValue = 1
-    draw() 
-    expect()
-})
+// test('the modal appears when the pringle passes the face', () => {
+// test that the modal element is rendered when the pringle reaches the left-side of the canvas
+// })
