@@ -1,12 +1,8 @@
-
-
 let faceRadius, faceY, dFaceY, upPressed, downPressed 
 
 const { createCanvas, loadImage } = require('canvas')
 const canvas = createCanvas(520, 320)
 const ctx = canvas.getContext('2d');
-
-
 
 faceRadius = 20;
 let canvasLength = 520;
@@ -23,6 +19,18 @@ let dPringle = 5;
 ctx.fillStyle = '#66cccc';
 ctx.fillRect(canvasStartX, canvasStartY, 520, 320);
 
+document.body.innerHTML =	
+    `<canvas id="canvas" width="520" height="320"></canvas>	
+    <script src="main.js"></script>
+    <div id='modal' class='modal'>
+    <div class='modal-content'>
+    <button class='play-again-button'></span>
+        <h1>Play Again</h1>
+    </div>
+    </div>`
+
+
+let modal = document.getElementById('modal')    
 
 const keyDownHandler = jest.fn(e => {
     if (e.keyCode === 38) {
@@ -43,9 +51,9 @@ const keyUpHandler = jest.fn(e => {
 });
 
 
-const draw = jest.fn(() => {
+const draw = jest.fn(async () => {
     drawFace();
-    drawPringle();
+    await drawPringle();
     requestAnimationFrame(draw);
 
     if (upPressed === true) {
@@ -60,15 +68,11 @@ const draw = jest.fn(() => {
     }
 })
 
-const youLost = jest.fn(() => {
-    toggleModal()
-    pringleCurrentXValue = pringleCurrentXValue - 1
-    
-})
 
 const toggleModal = jest.fn(() => {
-    let modal = document.getElementById('modal')
+    console.log('modal toggled')
     modal.classList.toggle('show-modal')
+    console.log(modal.className)
     if (modal.className === 'modal') {
         document.location.reload();
     }
@@ -84,13 +88,28 @@ const drawFace = jest.fn(() => {
 });
 
 const drawPringle = jest.fn(() => {
-    loadImage('pringle.png').then((img) => {
+    return loadImage('pringle.png')
+    .then(
+        img => {
+            console.log('first promise reached' + img)
+            return new Promise(res => {
+                setTimeout( () => res(img), 10000);
+            })
+        }
+    )    
+    .then( 
+        img => {
+        console.log('second promise has started')
         if (pringleCurrentXValue !== 0) {
+            console.log('drawPringle() if-statement reached')
             pringleCurrentXValue -= dPringle
             ctx.drawImage(img, pringleCurrentXValue, canvasWidth/2, pringleWidth, pringleHeight)
+
         }
         else {
-            youLost()
+            console.log('drawPringle() else statement reached')
+            toggleModal()
+            pringleCurrentXValue = pringleCurrentXValue - 1
         }
     })
 })
@@ -109,40 +128,43 @@ beforeEach(() => {
     dPringle = 5;
 });
 
-test ('pressing the up arrow key movedraws the face up & letting go of up arrow key leaves face in position', () => {
-    let event = new KeyboardEvent('keydown', {keyCode: 38})
-    document.dispatchEvent(event);
-    draw();
-    let event2 = new KeyboardEvent('keyup', {keyCode: 38})
-    document.dispatchEvent(event2);
-    draw();
-    expect(faceY).toBe(145);
-})
+// test ('pressing the up arrow key movedraws the face up & letting go of up arrow key leaves face in position', () => {
+//     let event = new KeyboardEvent('keydown', {keyCode: 38})
+//     document.dispatchEvent(event);
+//     draw();
+//     let event2 = new KeyboardEvent('keyup', {keyCode: 38})
+//     document.dispatchEvent(event2);
+//     draw();
+//     expect(faceY).toBe(145);
+// })
 
-test ('face will not move beyond top canvas border', () => {
-    faceY = 5;
-    loadImage('pringle.png').then((img) => {
-        let event = new KeyboardEvent('keydown', ctx.drawImage(img, pringleCurrentXValue, canvasWidth/2, pringleWidth, pringleHeight));
-        document.dispatchEvent(event); 
-        draw()
-        expect(faceY).toBe(5);
-    })
-})
+// test ('face will not move beyond top canvas border', () => {
+//     faceY = 5;
+//     loadImage('pringle.png').then((img) => {
+//         let event = new KeyboardEvent('keydown', ctx.drawImage(img, pringleCurrentXValue, canvasWidth/2, pringleWidth, pringleHeight));
+//         document.dispatchEvent(event); 
+//         draw()
+//         expect(faceY).toBe(5);
+//     })
+// })
 
-test('pressing the down arrow key moves the face down & letting go of down arrow key leaves face in position', () => {
-    let event = new KeyboardEvent('keydown', {keyCode: 40})
-    document.dispatchEvent(event);
-    draw();
-    let event2 = new KeyboardEvent('keyup', {keyCode: 40});
-    document.dispatchEvent(event2); 
-    draw();
-    expect(faceY).toBe(165);
-})
+// test('pressing the down arrow key moves the face down & letting go of down arrow key leaves face in position', () => {
+//     let event = new KeyboardEvent('keydown', {keyCode: 40})
+//     document.dispatchEvent(event);
+//     draw();
+//     let event2 = new KeyboardEvent('keyup', {keyCode: 40});
+//     document.dispatchEvent(event2); 
+//     draw();
+//     expect(faceY).toBe(165);
+// })
 
 // test('the pringle moves towards the face', () => {
 //   test that the pringle moves left after every invocation of draw()
 // })
 
-// test('the modal appears when the pringle passes the face', () => {
-// test that the modal element is rendered when the pringle reaches the left-side of the canvas
-// })
+test('the modal appears when the pringle passes the face', () => {
+    pringleCurrentXValue = 0
+    draw()
+    console.log(modal.className)
+    expect(modal.className).toBe('modal show-modal')
+})

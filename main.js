@@ -44,11 +44,6 @@ const keyUpHandler = e => {
     }
 }
 
-const youLost = () => {
-    toggleModal()
-    pringleCurrentXValue = pringleCurrentXValue - 1
-    
-}
 
 const toggleModal = () => {
     modal.classList.toggle('show-modal')
@@ -73,7 +68,8 @@ const drawPringle = () => {
 
     } 
     else {
-        youLost()
+        toggleModal()
+        pringleCurrentXValue = pringleCurrentXValue - 1
     }
 }
 
