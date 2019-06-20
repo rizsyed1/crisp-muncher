@@ -93,7 +93,7 @@ const drawPringle = jest.fn(() => {
         img => {
             console.log('first promise reached' + img)
             return new Promise(res => {
-                setTimeout( () => res(img), 10000);
+                setTimeout( () => res(img), 3000);
             })
         }
     )    
@@ -162,9 +162,9 @@ beforeEach(() => {
 //   test that the pringle moves left after every invocation of draw()
 // })
 
-test('the modal appears when the pringle passes the face', () => {
+test('the modal appears when the pringle passes the face', async () => {
     pringleCurrentXValue = 0
-    draw()
+    await draw()
     console.log(modal.className)
     expect(modal.className).toBe('modal show-modal')
 })
