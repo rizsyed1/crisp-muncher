@@ -7,6 +7,7 @@ let canvasStartX = 0
 let canvasStartY = 0
  
 let faceRadius = 20;
+let faceX = canvasStartX + faceRadius
 let faceY = 155
 let dFaceY = 10
 
@@ -54,7 +55,7 @@ const toggleModal = () => {
 
 const drawFace = () => {
     ctx.beginPath();
-    ctx.arc(canvasStartX + faceRadius, faceY, faceRadius, Math.PI*2.2 , Math.PI*1.8);
+    ctx.arc(faceX, faceY, faceRadius, Math.PI*2.2 , Math.PI*1.8);
     ctx.lineTo(canvasStartX + faceRadius, faceY)
     ctx.fillStyle = 'black';
     ctx.fill()
@@ -63,9 +64,13 @@ const drawFace = () => {
 
 const drawPringle = () => {
     if (pringleCurrentXValue !== canvasStartX) {
-        pringleCurrentXValue -= dPringle
-        ctx.drawImage(img, pringleCurrentXValue, canvasWidth/2, pringleWidth, pringleHeight)
-
+        if (pringleCurrentXValue === faceX + faceRadius) {
+            console.log('collission!')
+        }
+        else {
+            pringleCurrentXValue -= dPringle
+            ctx.drawImage(img, pringleCurrentXValue, canvasWidth/2, pringleWidth, pringleHeight)
+        }
     } 
     else {
         toggleModal()
@@ -74,7 +79,6 @@ const drawPringle = () => {
 }
 
 const draw = () => {
-    console.log(window.innerWidth, window.innerWidth / 4)
     ctx.clearRect(canvasStartX, canvasStartY, canvas.width, canvas.height);
     ctx.fillStyle = '#66cccc';
     ctx.fillRect(canvasStartX, canvasStartY, canvasLength, canvasWidth);
