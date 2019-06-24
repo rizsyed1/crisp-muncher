@@ -160,3 +160,5 @@ test('the modal appears when the pringle passes the face', async () => {
     await draw()
     expect(modal.className).toBe('modal show-modal')
 })
+
+// test if the game plays munch sound when pringle hits face 
