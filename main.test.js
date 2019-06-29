@@ -23,8 +23,8 @@ ctx.fillStyle = '#66cccc';
 ctx.fillRect(canvasStartX, canvasStartY, 520, 320);
 
 // Face range values
-let faceUpperYValue = faceY + faceRadius;
-let faceLowerYValue = faceY;
+let faceUpperYValue;
+let faceLowerYValue;
 
 //pringle range values 
 let pringleUpperYValue = pringleYValue + pringleHeight;
@@ -84,7 +84,7 @@ const updateIfPringleYValuesInFaceRange = jest.fn(() => {
     pringleUpperYValueInFaceRange = faceLowerYValue <= pringleUpperYValue && pringleUpperYValue <= faceUpperYValue;
 })
 
-const drawPringle = jest.fn(() => {
+const drawPringle = jest.fn(async () => {
     return loadImage('pringle.png')
     .then(
         img => {
@@ -94,23 +94,27 @@ const drawPringle = jest.fn(() => {
         }
     )    
     .then( 
-        img => {
+        async img => {
             if (pringleCurrentXValue > canvasStartX) {
                 if (pringleCurrentXValue <= faceX + faceRadius && (pringleLowerYValueInFaceRange || pringleUpperYValueInFaceRange) ) {
-                    // await playCollisionSound() 
-                    pringleCurrentXValue = pringleStartingXValue
-                    generatePringleRespawnYValue()
-    
+                    pringleSpeed += 0.2;
+                    if (faceRadius >= 7){
+                        faceRadius -= 0.1
+                    }
+                    await playCollisionSound();
+                    pringleCurrentXValue = pringleStartingXValue;
+                    generatePringleRespawnYValue();
+        
                 }
                 else {
-                    pringleCurrentXValue -= pringleSpeed
+                    pringleCurrentXValue -= pringleSpeed;
                     ctx.drawImage(img, pringleCurrentXValue, pringleYValue, pringleWidth, pringleHeight);
-                    updateIfPringleYValuesInFaceRange()
+                    updateIfPringleYValuesInFaceRange();
                 }
             }
             else {
+                animateAgain = false;
                 toggleModal();
-                pringleCurrentXValue = pringleCurrentXValue - 1;
             }
         }
     )
@@ -152,6 +156,8 @@ const drawFace = jest.fn(() => {
 beforeEach(() => {
     faceY = 155
     faceSpeed = 10;
+    faceUpperYValue = faceY + faceRadius;
+    faceLowerYValue = faceY - faceRadius;
     upPressed = false;
     downPressed = false;  
     document.addEventListener('keydown', keyDownHandler, false);
@@ -160,14 +166,15 @@ beforeEach(() => {
     pringleWidth = 50;
     pringleStartingXValue = canvasLength + 60;
     pringleCurrentXValue = pringleStartingXValue;
-    dPringle = 5;
+    pringleSpeed = 5;
+    let animateAgain = true;
 });
 
-test ('pressing the up arrow key moves the face up & letting go of up arrow key leaves face in position', async () => {
-    let event = new KeyboardEvent('keydown', {keyCode: 38})
+test ('pressing the up arrow moves the face up & letting go of up arrow key leaves face in position', async () => {
+    let event = new KeyboardEvent('keydown', {keyCode: 38});
     document.dispatchEvent(event);
     await draw();
-    let event2 = new KeyboardEvent('keyup', {keyCode: 38})
+    let event2 = new KeyboardEvent('keyup', {keyCode: 38});
     document.dispatchEvent(event2);
     await draw();
     expect(faceY).toBe(145);
@@ -183,7 +190,7 @@ test ('face will not move beyond top canvas border', async () => {
 
 
 test('pressing the down arrow key moves the face down & letting go of down arrow key leaves face in position', async () => {
-    let event = new KeyboardEvent('keydown', {keyCode: 40})
+    let event = new KeyboardEvent('keydown', {keyCode: 40});
     document.dispatchEvent(event);
     await draw();
     let event2 = new KeyboardEvent('keyup', {keyCode: 40});
@@ -193,19 +200,19 @@ test('pressing the down arrow key moves the face down & letting go of down arrow
 })
 
 test('the pringle moves towards the face', async () => {
-  await draw() 
+  await draw();
   expect(pringleCurrentXValue).toBeLessThan(pringleStartingXValue);
 })
 
 test('the modal appears when the pringle passes the face', async () => {
-    pringleCurrentXValue = 0
-    await draw()
-    expect(modal.className).toBe('modal show-modal')
+    pringleCurrentXValue = 0;
+    await draw();
+    expect(modal.className).toBe('modal show-modal');
 })
 
-test('a munch sound plays when the pringle collides with the face', () => {
-    pringleCurrentXValue = faceX + faceRadius;
-    pringleUpperYValue = faceY + 3
-    expect(playCollisionSound).toHaveBeenCalled()
-
+test('a munch sound plays when the pringle collides with the face', async () => {
+    pringleCurrentXValue = faceX;
+    pringleUpperYValue = faceY;
+    await draw();
+    expect(playCollisionSound).toHaveBeenCalled();
 })

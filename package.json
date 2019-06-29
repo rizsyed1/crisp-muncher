@@ -2,8 +2,10 @@
   "dependencies": {
     "@babel/preset-env": "^7.4.5",
     "canvas": "^2.5.0",
+    "gh-pages": "^2.0.1",
     "jest": "^24.8.0",
-    "jest-dom": "^3.5.0"
+    "jest-dom": "^3.5.0",
+    "jest-runtime": "^24.8.0"
   },
   "scripts": {
     "test": "jest"
