@@ -105,7 +105,6 @@ const drawPringle = async () => {
 }
 
 const toggleModal = () => {
-    console.log('toggleModal() reached');
     modal.classList.toggle('show-modal');
     if (modal.className === 'modal') {
         document.location.reload();
