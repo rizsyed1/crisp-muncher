@@ -30,6 +30,8 @@ img.src = 'pringle.png';
 let sound = document.createElement('audio');
 sound.src = 'crisp-munch.mp3';
 
+let score = 0;
+
 let requestID;
 
 // Face range values
@@ -66,6 +68,12 @@ const keyUpHandler = e => {
     }
 }
 
+const incrementScore = () => {
+    score += 1;
+    let oldScore = document.getElementById('scoreNumber');
+    oldScore.textContent = score;
+};
+
 const playCollisionSound = () => {
     sound.setAttribute('preload', 'auto');
     sound.setAttribute('controls', 'none');
@@ -83,9 +91,10 @@ const updateIfPringleYValuesInFaceRange = () => {
 const drawPringle = async () => {
     if (pringleCurrentXValue > canvasStartX) {
         if (pringleCurrentXValue <= faceX + faceRadius && (pringleLowerYValueInFaceRange || pringleUpperYValueInFaceRange) ) {
-            pringleSpeed += 0.2;
+            incrementScore();
+            pringleSpeed += 0.3;
             if (faceRadius >= 7){
-                faceRadius -= 0.1
+                faceRadius -= 0.3
             }
             await playCollisionSound();
             pringleCurrentXValue = pringleStartingXValue;

@@ -7,24 +7,25 @@ let canvasWidth = 320;
 let canvasStartX = 0;
 let canvasStartY = 0;
 
-// Pringle values
-let pringleHeight, pringleWidth, pringleStartingXValue, pringleCurrentXValue
+// pringle values
+let pringleHeight, pringleWidth, pringleStartingXValue, pringleCurrentXValue, pringleSpeed;
+let pringleYValue = canvasWidth/2; 
 
-let pringleYValue = canvasWidth/2 
-let pringleSpeed
+// score value
+let score;
 
 ctx.fillStyle = '#66cccc';
 ctx.fillRect(canvasStartX, canvasStartY, 520, 320);
 
 // upPressed and downPressed booleans 
-let upPressed, downPressed
+let upPressed, downPressed;
 
 // Face values
-let faceRadius, faceY, faceSpeed
+let faceRadius, faceY, faceSpeed;
 let faceX = canvasStartX + faceRadius;
 
 // Face range values
-let faceLowerYValue, faceUpperYValue
+let faceLowerYValue, faceUpperYValue;
 
 //pringle range values 
 let pringleUpperYValue = pringleYValue + pringleHeight;
@@ -32,9 +33,12 @@ let pringleLowerYValue = pringleYValue;
 let pringleLowerYValueInFaceRange = faceLowerYValue <= pringleLowerYValue && pringleLowerYValue <= faceUpperYValue;
 let pringleUpperYValueInFaceRange = faceLowerYValue <= pringleUpperYValue && pringleUpperYValue <= faceUpperYValue;
 
+// JSDom does not support audio playback
+window.HTMLMediaElement.prototype.play = () => { /* do nothing */ };
 
 document.body.innerHTML =	
-    `<canvas id="canvas" width="520" height="320"></canvas>	
+    `<span id='score' class='score'>Score: <span id='scoreNumber' class='scoreNumber'>0</span></span>
+    <canvas id="canvas" width="520" height="320"></canvas>	
     <script src="main.js"></script>
     <div id='modal' class='modal'>
     <div class='modal-content'>
@@ -44,46 +48,45 @@ document.body.innerHTML =
     </div>`
 
 
-let modal = document.getElementById('modal') 
-let sound = document.createElement('audio')  
+let modal = document.getElementById('modal');
+let sound = document.createElement('audio') ; 
 
 const generatePringleRespawnYValue = jest.fn(() => {
-    pringleYValue = Math.floor( Math.random() * (canvasWidth - pringleHeight) )
+    pringleYValue = Math.floor( Math.random() * (canvasWidth - pringleHeight) );
     pringleUpperYValue = pringleYValue + pringleHeight;
     pringleLowerYValue = pringleYValue;
 })
 
 const keyDownHandler = jest.fn(e => {
-    console.log('keyDownHandler() reached')
     if (e.keyCode === 38) {
-        console.log('upPressed set to true')
         upPressed = true; 
     }
     else if (e.keyCode === 40) {
-        console.log('downPressed set to true')
         downPressed = true;
     }
 })
 
 const keyUpHandler = jest.fn(e => {
-    console.log('keyUpHandler() reached')
     if (e.keyCode === 38) {
-        console.log('upPressed set to false')
         upPressed = false;
     }
     else if (e.keyCode === 40) {
-        console.log('downPressed set to false')
         downPressed = false;
     }
 });
 
 const playCollisionSound = jest.fn(() => {
-    console.log('playCollisionSound() reached')
     sound.setAttribute('preload', 'auto');
     sound.setAttribute('controls', 'none');
     sound.style.display = 'none'; 
     document.body.appendChild(sound);
-    sound.play()
+    sound.play();
+});
+
+const incrementScore = jest.fn(() => {
+    score += 1;
+    let oldScore = document.getElementById('scoreNumber');
+    oldScore.textContent = score;
 });
 
 const updateIfPringleYValuesInFaceRange = jest.fn(() => {
@@ -92,7 +95,6 @@ const updateIfPringleYValuesInFaceRange = jest.fn(() => {
 })
 
 const drawPringle = jest.fn(async () => {
-    console.log('drawPringle() reached')
     return loadImage('pringle.png')
     .then(
         img => {
@@ -103,18 +105,12 @@ const drawPringle = jest.fn(async () => {
     )    
     .then( 
         async img => {
-            console.log('second then reached');
-            console.log(pringleCurrentXValue, canvasStartX);
             if (pringleCurrentXValue > canvasStartX) {
-                console.log('first if condition of second then reached');
-
-                console.log(pringleLowerYValueInFaceRange, pringleUpperYValueInFaceRange) ;
-
                 if (pringleCurrentXValue <= faceX + faceRadius && (pringleLowerYValueInFaceRange || pringleUpperYValueInFaceRange) ) {
-                    console.log('pringle within face-range condition passed')
-                    pringleSpeed += 0.2;
+                    incrementScore();
+                    pringleSpeed += 0.3;
                     if (faceRadius >= 7){
-                        faceRadius -= 0.1
+                        faceRadius -= 0.3;
                     }
                     await playCollisionSound();
                     pringleCurrentXValue = pringleStartingXValue;
@@ -136,45 +132,42 @@ const drawPringle = jest.fn(async () => {
 })
 
 const toggleModal = jest.fn(() => {
-    modal.classList.toggle('show-modal')
+    modal.classList.toggle('show-modal');
     if (modal.className === 'modal') {
         document.location.reload();
     }
 })
 
 const draw = jest.fn(async () => {
-    console.log('draw() reached');
     drawFace();
     await drawPringle();
     if (upPressed === true) {
-        console.log(`PAY ATTENTION ${faceY - faceSpeed}, ${canvasStartY}, ${faceRadius}`)
         if (faceY - faceSpeed > canvasStartY + faceRadius ) {
             faceY -= faceSpeed;
-            console.log('faceY decreased');
         }
     }
     else if (downPressed === true) {
         if (faceY + faceSpeed < canvasWidth - faceRadius) {
             faceY += faceSpeed;
-            console.log('faceY increased');
         }
     }
 })
 
 
 const drawFace = jest.fn(() => {
-    console.log('drawFace() reached')
     ctx.beginPath();
     ctx.arc(30, faceY, faceRadius, Math.PI*2.2 , Math.PI*1.8);
     ctx.lineTo(30, faceY);
     ctx.fillStyle = 'black';
     ctx.fill();
     ctx.closePath();
-    console.log('drawFace() ended')
 });
 
+document.addEventListener('keydown', keyDownHandler, false);
+document.addEventListener('keyup', keyUpHandler, false);
+
 beforeEach(() => {
-    faceY = 155
+    faceY = 155;
     faceRadius = 20;
     faceX = canvasStartX + faceRadius;
     faceSpeed = 10;
@@ -182,13 +175,12 @@ beforeEach(() => {
     faceLowerYValue = faceY - faceRadius;
     upPressed = false;
     downPressed = false;  
-    document.addEventListener('keydown', keyDownHandler, false);
-    document.addEventListener('keyup', keyUpHandler, false);
     pringleHeight = 20;
     pringleWidth = 50;
     pringleStartingXValue = canvasLength + 60;
     pringleCurrentXValue = canvasLength + 60;
     pringleSpeed = 5;
+    score = 0;
 });
 
 test ('pressing the up arrow moves the face up & letting go of up arrow key leaves face in position', async () => {
@@ -208,7 +200,6 @@ test ('face will not move beyond top canvas border', async () => {
     await draw();
     expect(faceY).toBe(5);
 });
-
 
 test('pressing the down arrow key moves the face down & letting go of down arrow key leaves face in position', async () => {
     let event = new KeyboardEvent('keydown', {keyCode: 40});
@@ -234,7 +225,33 @@ test('the modal appears when the pringle passes the face', async () => {
 test('a munch sound plays when the pringle collides with the face', async () => {
     pringleCurrentXValue = faceX;
     pringleUpperYValue = faceY;
-    updateIfPringleYValuesInFaceRange()
+    updateIfPringleYValuesInFaceRange();
     await draw();
     expect(playCollisionSound).toHaveBeenCalled();
 })
+
+test('pringle speed increases after collision', async () => {
+    pringleCurrentXValue = faceX;
+    pringleUpperYValue = faceY;
+    updateIfPringleYValuesInFaceRange()
+    await draw();
+    expect(pringleSpeed).toBe(5.3);
+})
+
+test('pringle radius decreases after collision', async () => {
+    pringleCurrentXValue = faceX;
+    pringleUpperYValue = faceY;
+    updateIfPringleYValuesInFaceRange();
+    await draw();
+    expect(faceRadius).toBe(19.7);
+});
+
+test('score increments upon collision', async () => {
+    score = 1;
+    pringleCurrentXValue = faceX;
+    pringleUpperYValue = faceY;
+    updateIfPringleYValuesInFaceRange();
+    await draw();
+    let scoreNumber = document.getElementById('scoreNumber').textContent;
+    expect(scoreNumber).toBe('2');
+});

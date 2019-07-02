@@ -2,6 +2,13 @@ body{
     height: 100vh;
     overflow: hidden;
 }
+.score{
+    background-color: #66cccc;
+    border-radius: 0.5rem; 
+    color: green;
+    border-style: solid;
+    font-size: 2em
+}
 
 .canvas {
     padding-left: 0;
