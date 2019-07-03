@@ -51,7 +51,7 @@ document.body.innerHTML =
 let modal = document.getElementById('modal');
 let sound = document.createElement('audio') ; 
 
-const generatePringleRespawnYValue = jest.fn(() => {
+const generatePringleSpawnValue = jest.fn(() => {
     pringleYValue = Math.floor( Math.random() * (canvasWidth - pringleHeight) );
     pringleUpperYValue = pringleYValue + pringleHeight;
     pringleLowerYValue = pringleYValue;
@@ -82,6 +82,17 @@ const playCollisionSound = jest.fn(() => {
     document.body.appendChild(sound);
     sound.play();
 });
+ 
+const collision = jest.fn( async() => {
+    incrementScore();
+    pringleSpeed += 0.3;
+    if (faceRadius >= 7){
+        faceRadius -= 0.3
+    }
+    await playCollisionSound();
+    pringleCurrentXValue = pringleStartingXValue;
+    generatePringleSpawnValue();
+});
 
 const incrementScore = jest.fn(() => {
     score += 1;
@@ -107,14 +118,7 @@ const drawPringle = jest.fn(async () => {
         async img => {
             if (pringleCurrentXValue > canvasStartX) {
                 if (pringleCurrentXValue <= faceX + faceRadius && (pringleLowerYValueInFaceRange || pringleUpperYValueInFaceRange) ) {
-                    incrementScore();
-                    pringleSpeed += 0.3;
-                    if (faceRadius >= 7){
-                        faceRadius -= 0.3;
-                    }
-                    await playCollisionSound();
-                    pringleCurrentXValue = pringleStartingXValue;
-                    generatePringleRespawnYValue();
+                    collision()
         
                 }
                 else {

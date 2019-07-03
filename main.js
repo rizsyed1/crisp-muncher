@@ -44,7 +44,7 @@ let pringleLowerYValue = pringleYValue;
 let pringleLowerYValueInFaceRange = faceLowerYValue <= pringleLowerYValue && pringleLowerYValue <= faceUpperYValue;
 let pringleUpperYValueInFaceRange = faceLowerYValue <= pringleUpperYValue && pringleUpperYValue <= faceUpperYValue;
 
-const generatePringleRespawnYValue = () =>  {
+const generatePringleSpawnValue = () =>  {
     pringleYValue = Math.floor( Math.random() * (canvasWidth - pringleHeight) );
     pringleUpperYValue = pringleYValue + pringleHeight;
     pringleLowerYValue = pringleYValue;
@@ -87,18 +87,10 @@ const updateIfPringleYValuesInFaceRange = () => {
     pringleUpperYValueInFaceRange = faceLowerYValue <= pringleUpperYValue && pringleUpperYValue <= faceUpperYValue;
 }
 
-
-const drawPringle = async () => {
+const drawPringle = () => {
     if (pringleCurrentXValue > canvasStartX) {
         if (pringleCurrentXValue <= faceX + faceRadius && (pringleLowerYValueInFaceRange || pringleUpperYValueInFaceRange) ) {
-            incrementScore();
-            pringleSpeed += 0.3;
-            if (faceRadius >= 7){
-                faceRadius -= 0.3
-            }
-            await playCollisionSound();
-            pringleCurrentXValue = pringleStartingXValue;
-            generatePringleRespawnYValue();
+            collision()
 
         }
         else {
@@ -133,7 +125,6 @@ const draw = () => {
     ctx.clearRect(canvasStartX, canvasStartY, canvas.width, canvas.height);
     ctx.fillStyle = '#66cccc';
     ctx.fillRect(canvasStartX, canvasStartY, canvasLength, canvasWidth);
-
     drawFace();
     drawPringle();
     
@@ -149,6 +140,7 @@ const draw = () => {
             assignFaceYValues() 
         } 
     }
+
     if (animateAgain) {
         requestAnimationFrame(draw)
     }
