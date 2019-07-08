@@ -5,11 +5,13 @@ let canvasWidth = 320;
 let canvasStartX = 0;
 let canvasStartY = 0;
  
+// face values
 let faceRadius = 20;
 let faceX = canvasStartX + faceRadius;
 let faceY = faceRadius + 10;
 let faceSpeed = 10;
 
+//pringle values
 let pringleHeight = 20;
 let pringleWidth = 50;
 let pringleStartingXValue = canvasLength + 60;
@@ -23,15 +25,19 @@ let animateAgain = true;
 
 const modal = document.querySelector('.modal');
 const playAgainButton = document.querySelector('.play-again-button');
+let oldScore;
 
+// image element
 let img = new Image();
 img.src = 'pringle.png';
 
+// sound element
 let sound = document.createElement('audio');
 sound.src = 'crisp-munch.mp3';
 
 let score = 0;
 
+// requestAnimationFrame ID
 let requestID;
 
 // Face range values
@@ -70,7 +76,7 @@ const keyUpHandler = e => {
 
 const incrementScore = () => {
     score += 1;
-    let oldScore = document.getElementById('scoreNumber');
+    oldScore = document.getElementById('scoreNumber');
     oldScore.textContent = score;
 };
 
@@ -126,6 +132,7 @@ const draw = () => {
     ctx.fillStyle = '#66cccc';
     ctx.fillRect(canvasStartX, canvasStartY, canvasLength, canvasWidth);
     drawFace();
+    //insert if-condition here so drawPringle() is called every three seconds
     drawPringle();
     
     if (upPressed === true ) {
