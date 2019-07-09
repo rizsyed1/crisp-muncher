@@ -27,6 +27,11 @@ const modal = document.querySelector('.modal');
 const playAgainButton = document.querySelector('.play-again-button');
 let oldScore;
 
+// time values
+let timeAtBeginningOfGame = Date.now();
+let lastPringleSpawnTime = Date.now(); 
+let timeBetweenRespawns = 3000;
+
 // image element
 let img = new Image();
 img.src = 'pringle.png';
@@ -73,6 +78,40 @@ const keyUpHandler = e => {
         downPressed = false;
     }
 }
+const verifyRespawnTimeHasPassed = () => {
+    let withinTenMillisecondsLessThanTimeBetweenRespawns = Date.now() - lastPringleSpawnTime > timeBetweenRespawns - 10;
+    let withinTenMillisecondsGreaterThanTimeBetweenRespawns = Date.now() - lastPringleSpawnTime < timeBetweenRespawns + 10;
+
+    if (withinTenMillisecondsLessThanTimeBetweenRespawns && withinTenMillisecondsGreaterThanTimeBetweenRespawns) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+const verifyGameHasStarted = () => {
+    let withinTenMillisecondsOfGameStart = Date.now()  < timeAtBeginningOfGame + 10;
+
+    if (withinTenMillisecondsOfGameStart) {
+        timeAtBeginningOfGame = - 100 // ensures only one crisp renders at the beginning 
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+
+const pringleTimeElapsed = () => {
+    verifyGameHasStarted();
+    if ( verifyRespawnTimeHasPassed() || verifyGameHasStarted()) { // console.log to make sure verifyGameHasStarted works
+        return true;
+    }
+    else {
+        return false;
+    }
+}
 
 const incrementScore = () => {
     score += 1;
@@ -87,6 +126,17 @@ const playCollisionSound = () => {
     document.body.appendChild(sound);
     sound.play();
 }
+
+const collision = async() => {
+    incrementScore();
+    pringleSpeed += 0.3;
+    if (faceRadius >= 7){
+        faceRadius -= 0.3;
+    }
+    await playCollisionSound();
+    pringleCurrentXValue = pringleStartingXValue;
+    generatePringleSpawnValue();
+};
 
 const updateIfPringleYValuesInFaceRange = () => {
     pringleLowerYValueInFaceRange = faceLowerYValue <= pringleLowerYValue && pringleLowerYValue <= faceUpperYValue;

@@ -34,11 +34,6 @@ let pringleLowerYValue = pringleYValue;
 let pringleLowerYValueInFaceRange = faceLowerYValue <= pringleLowerYValue && pringleLowerYValue <= faceUpperYValue;
 let pringleUpperYValueInFaceRange = faceLowerYValue <= pringleUpperYValue && pringleUpperYValue <= faceUpperYValue;
 
-// time values
-let timeAtBeginningOfGame = Date.now();
-let lastPringleSpawnTime = Date.now(); 
-let timeBetweenRespawns = 3000;
-
 // JSDom does not support audio playback
 window.HTMLMediaElement.prototype.play = () => { /* do nothing */ };
 
@@ -81,17 +76,6 @@ const keyUpHandler = jest.fn(e => {
     }
 });
 
-const pringleTimeElapsed = jest.fn(() => {
-    if (Date.now() - lastPringleSpawnTime === timeBetweenRespawns || Date.now() === timeAtBeginningOfGame) { // change this to take into account millisecond rendering time
-        lastPringleSpawnTime = Date.now();
-        return true; 
-    }
-    else {
-        console.log(Date.now() - lastPringleSpawnTime )
-        return false;
-    }
-})
-
 const playCollisionSound = jest.fn(() => {
     sound.setAttribute('preload', 'auto');
     sound.setAttribute('controls', 'none');
@@ -101,6 +85,7 @@ const playCollisionSound = jest.fn(() => {
 });
  
 const collision = jest.fn( async() => {
+    console.log('collision() reached');
     incrementScore();
     pringleSpeed += 0.3;
     if (faceRadius >= 7){
@@ -135,12 +120,12 @@ const drawPringle = jest.fn(async () => {
         async img => {
             if (pringleCurrentXValue > canvasStartX) {
                 if (pringleCurrentXValue <= faceX + faceRadius && (pringleLowerYValueInFaceRange || pringleUpperYValueInFaceRange) ) {
+                    console
                     collision()
         
                 }
                 else {
                     pringleCurrentXValue -= pringleSpeed;
-                    pringleTimeElapsed();
                     ctx.drawImage(img, pringleCurrentXValue, pringleYValue, pringleWidth, pringleHeight);
                     updateIfPringleYValuesInFaceRange();
                 }
@@ -278,14 +263,3 @@ beforeEach(() => {
 //     let scoreNumber = document.getElementById('scoreNumber').textContent;
 //     expect(scoreNumber).toBe('2');
 // });
-
-test('a new pringle spawns every three seconds', async () => {
-    jest.useFakeTimers();
-    await draw(); 
-    expect(pringleTimeElapsed).toHaveReturnedWith(false);
-    jest.advanceTimersByTime(3000);
-    await draw();
-    expect(pringleTimeElapsed).toHaveReturnedWith(true); 
-    // figure out how to get this test to assert that pringleTimeElapsed returns true..
-    // after three seconds of time has passed.
-})
