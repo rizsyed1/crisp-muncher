@@ -168,7 +168,7 @@ const drawPringleEngine = () => {
     for (let j = 0; j < pringleArr.length; j++) {
         // console.log('for loop started')
         if (pringleArr[j].pringleCurrentXValue > canvasStartX) {
-                pringleArr.forEach( (object) => object.pringleCurrentXValue -= pringleSpeed)
+            pringleArr[j].pringleCurrentXValue -= pringleSpeed;
                 drawPringle(); 
                 updateIfPringleYValuesInFaceRange();
 
