@@ -107,7 +107,7 @@ const updateIfPringleYValuesInFaceRange = jest.fn(() => {
     pringleUpperYValueInFaceRange = faceLowerYValue <= pringleUpperYValue && pringleUpperYValue <= faceUpperYValue;
 })
 
-const drawPringle = jest.fn(async () => {
+const drawPringleEngine = jest.fn(async () => {
     return loadImage('pringle.png')
     .then(
         img => {
@@ -147,7 +147,7 @@ const toggleModal = jest.fn(() => {
 
 const draw = jest.fn(async () => {
     drawFace();
-    await drawPringle()
+    await drawPringleEngine()
     if (upPressed === true) {
         if (faceY - faceSpeed > canvasStartY + faceRadius ) {
             faceY -= faceSpeed;
@@ -191,75 +191,75 @@ beforeEach(() => {
     score = 0;
 });
 
-// test ('pressing the up arrow moves the face up & letting go of up arrow key leaves face in position', async () => {
-//     let event = new KeyboardEvent('keydown', {keyCode: 38});
-//     document.dispatchEvent(event);
-//     await draw();
-//     let event2 = new KeyboardEvent('keyup', {keyCode: 38});
-//     document.dispatchEvent(event2);
-//     await draw();
-//     expect(faceY).toBe(145);
-// });
+test ('pressing the up arrow moves the face up & letting go of up arrow key leaves face in position', async () => {
+    let event = new KeyboardEvent('keydown', {keyCode: 38});
+    document.dispatchEvent(event);
+    await draw();
+    let event2 = new KeyboardEvent('keyup', {keyCode: 38});
+    document.dispatchEvent(event2);
+    await draw();
+    expect(faceY).toBe(145);
+});
 
-// test ('face will not move beyond top canvas border', async () => {
-//     faceY = 5;
-//     let event = new KeyboardEvent('keydown', {keyCode: 38});
-//     document.dispatchEvent(event); 
-//     await draw();
-//     expect(faceY).toBe(5);
-// });
+test ('face will not move beyond top canvas border', async () => {
+    faceY = 5;
+    let event = new KeyboardEvent('keydown', {keyCode: 38});
+    document.dispatchEvent(event); 
+    await draw();
+    expect(faceY).toBe(5);
+});
 
-// test('pressing the down arrow key moves the face down & letting go of down arrow key leaves face in position', async () => {
-//     let event = new KeyboardEvent('keydown', {keyCode: 40});
-//     document.dispatchEvent(event);
-//     await draw();
-//     let event2 = new KeyboardEvent('keyup', {keyCode: 40});
-//     document.dispatchEvent(event2); 
-//     await draw();
-//     expect(faceY).toBe(165);
-// });
+test('pressing the down arrow key moves the face down & letting go of down arrow key leaves face in position', async () => {
+    let event = new KeyboardEvent('keydown', {keyCode: 40});
+    document.dispatchEvent(event);
+    await draw();
+    let event2 = new KeyboardEvent('keyup', {keyCode: 40});
+    document.dispatchEvent(event2); 
+    await draw();
+    expect(faceY).toBe(165);
+});
 
-// test('the pringle moves towards the face', async () => {
-//   await draw();
-//   expect(pringleCurrentXValue).toBeLessThan(pringleStartingXValue);
-// });
+test('the pringle moves towards the face', async () => {
+  await draw();
+  expect(pringleCurrentXValue).toBeLessThan(pringleStartingXValue);
+});
 
-// test('the modal appears when the pringle passes the face', async () => {
-//     pringleCurrentXValue = 0;   
-//     await draw();
-//     expect(modal.className).toBe('modal show-modal');
-// });
+test('the modal appears when the pringle passes the face', async () => {
+    pringleCurrentXValue = 0;   
+    await draw();
+    expect(modal.className).toBe('modal show-modal');
+});
 
-// test('a munch sound plays when the pringle collides with the face', async () => {
-//     pringleCurrentXValue = faceX;
-//     pringleUpperYValue = faceY;
-//     updateIfPringleYValuesInFaceRange();
-//     await draw();
-//     expect(playCollisionSound).toHaveBeenCalled();
-// })
+test('a munch sound plays when the pringle collides with the face', async () => {
+    pringleCurrentXValue = faceX;
+    pringleUpperYValue = faceY;
+    updateIfPringleYValuesInFaceRange();
+    await draw();
+    expect(playCollisionSound).toHaveBeenCalled();
+})
 
-// test('pringle speed increases after collision', async () => {
-//     pringleCurrentXValue = faceX;
-//     pringleUpperYValue = faceY;
-//     updateIfPringleYValuesInFaceRange()
-//     await draw();
-//     expect(pringleSpeed).toBe(5.3);
-// })
+test('pringle speed increases after collision', async () => {
+    pringleCurrentXValue = faceX;
+    pringleUpperYValue = faceY;
+    updateIfPringleYValuesInFaceRange()
+    await draw();
+    expect(pringleSpeed).toBe(5.3);
+})
 
-// test('pringle radius decreases after collision', async () => {
-//     pringleCurrentXValue = faceX;
-//     pringleUpperYValue = faceY;
-//     updateIfPringleYValuesInFaceRange();
-//     await draw();
-//     expect(faceRadius).toBe(19.7);
-// });
+test('pringle radius decreases after collision', async () => {
+    pringleCurrentXValue = faceX;
+    pringleUpperYValue = faceY;
+    updateIfPringleYValuesInFaceRange();
+    await draw();
+    expect(faceRadius).toBe(19.7);
+});
 
-// test('score increments upon collision', async () => {
-//     score = 1;
-//     pringleCurrentXValue = faceX;
-//     pringleUpperYValue = faceY;
-//     updateIfPringleYValuesInFaceRange();
-//     await draw();
-//     let scoreNumber = document.getElementById('scoreNumber').textContent;
-//     expect(scoreNumber).toBe('2');
-// });
+test('score increments upon collision', async () => {
+    score = 1;
+    pringleCurrentXValue = faceX;
+    pringleUpperYValue = faceY;
+    updateIfPringleYValuesInFaceRange();
+    await draw();
+    let scoreNumber = document.getElementById('scoreNumber').textContent;
+    expect(scoreNumber).toBe('2');
+});

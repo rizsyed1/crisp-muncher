@@ -14,10 +14,10 @@ let faceSpeed = 10;
 //pringle values
 let pringleHeight = 20;
 let pringleWidth = 50;
+// let pringleCurrentXValue = canvasLength + 60;
 let pringleStartingXValue = canvasLength + 60;
-let pringleCurrentXValue = canvasLength + 60;
-let pringleYValue = canvasWidth / 2; // this will be the y co-ordinate for the new pringle after collission.
-let pringleSpeed = 5;
+let pringleSpeed = 4;
+let pringleArr = [];
 
 let upPressed = false; 
 let downPressed = false;
@@ -30,7 +30,7 @@ let oldScore;
 // time values
 let timeAtBeginningOfGame = Date.now();
 let lastPringleSpawnTime = Date.now(); 
-let timeBetweenRespawns = 3000;
+let timeBetweenRespawns = 1200;
 
 // image element
 let img = new Image();
@@ -50,15 +50,17 @@ let faceUpperYValue = faceY + faceRadius;
 let faceLowerYValue = faceY;
 
 //pringle range values 
-let pringleUpperYValue = pringleYValue + pringleHeight;
-let pringleLowerYValue = pringleYValue;
-let pringleLowerYValueInFaceRange = faceLowerYValue <= pringleLowerYValue && pringleLowerYValue <= faceUpperYValue;
-let pringleUpperYValueInFaceRange = faceLowerYValue <= pringleUpperYValue && pringleUpperYValue <= faceUpperYValue;
 
-const generatePringleSpawnValue = () =>  {
-    pringleYValue = Math.floor( Math.random() * (canvasWidth - pringleHeight) );
-    pringleUpperYValue = pringleYValue + pringleHeight;
-    pringleLowerYValue = pringleYValue;
+const spawnNewPringle = () =>  {
+    let newPringleYValue = Math.floor( Math.random() * (canvasWidth - pringleHeight) );
+    pringleArr.push(
+        {   
+            pringleYValue: newPringleYValue, 
+            pringleCurrentXValue : pringleStartingXValue,
+            pringleLowerYValueInFaceRange: false,
+            pringleUpperYValueInFaceRange: false
+        }
+    );
 }
 
 const keyDownHandler = e => {
@@ -83,6 +85,7 @@ const verifyRespawnTimeHasPassed = () => {
     let withinTenMillisecondsGreaterThanTimeBetweenRespawns = Date.now() - lastPringleSpawnTime < timeBetweenRespawns + 10;
 
     if (withinTenMillisecondsLessThanTimeBetweenRespawns && withinTenMillisecondsGreaterThanTimeBetweenRespawns) {
+        lastPringleSpawnTime = Date.now()
         return true;
     }
     else {
@@ -91,9 +94,12 @@ const verifyRespawnTimeHasPassed = () => {
 }
 
 const verifyGameHasStarted = () => {
+    // console.log('verifyGameHasStarted() reached')
     let withinTenMillisecondsOfGameStart = Date.now()  < timeAtBeginningOfGame + 10;
+    console.log(withinTenMillisecondsOfGameStart)
 
     if (withinTenMillisecondsOfGameStart) {
+        console.log(withinTenMillisecondsOfGameStart);
         timeAtBeginningOfGame = - 100 // ensures only one crisp renders at the beginning 
         return true;
     }
@@ -104,8 +110,8 @@ const verifyGameHasStarted = () => {
 
 
 const pringleTimeElapsed = () => {
-    verifyGameHasStarted();
     if ( verifyRespawnTimeHasPassed() || verifyGameHasStarted()) { // console.log to make sure verifyGameHasStarted works
+        console.log('new pringle time')
         return true;
     }
     else {
@@ -129,35 +135,52 @@ const playCollisionSound = () => {
 
 const collision = async() => {
     incrementScore();
+    pringleArr.shift()
     pringleSpeed += 0.3;
     if (faceRadius >= 7){
         faceRadius -= 0.3;
     }
     await playCollisionSound();
-    pringleCurrentXValue = pringleStartingXValue;
-    generatePringleSpawnValue();
+    //delete pringle from pringleArr
 };
 
 const updateIfPringleYValuesInFaceRange = () => {
-    pringleLowerYValueInFaceRange = faceLowerYValue <= pringleLowerYValue && pringleLowerYValue <= faceUpperYValue;
-    pringleUpperYValueInFaceRange = faceLowerYValue <= pringleUpperYValue && pringleUpperYValue <= faceUpperYValue;
+    for (let k = 0; k < pringleArr.length; k++) {
+        let pringleUpperYValue = pringleArr[k].pringleYValue + pringleHeight;
+        let pringleLowerYValue = pringleArr[k].pringleYValue;
+        pringleArr[k].pringleLowerYValueInFaceRange = faceLowerYValue <= pringleLowerYValue && pringleLowerYValue <= faceUpperYValue;
+        pringleArr[k].pringleUpperYValueInFaceRange = faceLowerYValue <= pringleUpperYValue && pringleUpperYValue <= faceUpperYValue;
+    }
 }
 
 const drawPringle = () => {
-    if (pringleCurrentXValue > canvasStartX) {
-        if (pringleCurrentXValue <= faceX + faceRadius && (pringleLowerYValueInFaceRange || pringleUpperYValueInFaceRange) ) {
-            collision()
+    // console.log('drawPringle() reached')
+    for (let i = 0; i < pringleArr.length; i++) {
+        ctx.drawImage(img, pringleArr[i].pringleCurrentXValue, pringleArr[i].pringleYValue, pringleWidth, pringleHeight);
+    }
+}
 
+const drawPringleEngine = () => {
+    if (pringleTimeElapsed()) {
+        spawnNewPringle();
+    }
+    // console.log('drawPringleEngine() reached')
+    for (let j = 0; j < pringleArr.length; j++) {
+        // console.log('for loop started')
+        if (pringleArr[j].pringleCurrentXValue > canvasStartX) {
+                pringleArr.forEach( (object) => object.pringleCurrentXValue -= pringleSpeed)
+                drawPringle(); 
+                updateIfPringleYValuesInFaceRange();
+
+                if (pringleArr[j].pringleCurrentXValue <= faceX + faceRadius && (pringleArr[j].pringleLowerYValueInFaceRange || pringleArr[j].pringleUpperYValueInFaceRange) ) {
+                    collision()
+                }
         }
         else {
-            pringleCurrentXValue -= pringleSpeed;
-            ctx.drawImage(img, pringleCurrentXValue, pringleYValue, pringleWidth, pringleHeight);
-            updateIfPringleYValuesInFaceRange();
+            animateAgain = false;
+            toggleModal();
+            break
         }
-    }
-    else {
-        animateAgain = false;
-        toggleModal();
     }
 }
 
@@ -169,6 +192,7 @@ const toggleModal = () => {
 }
 
 const drawFace = () => {
+    // console.log('drawFace() reached')
     ctx.beginPath();
     ctx.arc(faceX, faceY, faceRadius, Math.PI*2.2 , Math.PI*1.8);
     ctx.lineTo(canvasStartX + faceRadius, faceY);
@@ -178,12 +202,13 @@ const drawFace = () => {
 }
 
 const draw = () => {
+    // console.log('draw() reached')
     ctx.clearRect(canvasStartX, canvasStartY, canvas.width, canvas.height);
     ctx.fillStyle = '#66cccc';
     ctx.fillRect(canvasStartX, canvasStartY, canvasLength, canvasWidth);
     drawFace();
-    //insert if-condition here so drawPringle() is called every three seconds
-    drawPringle();
+    //insert if-condition here so drawPringleEngine() is called every three seconds
+    drawPringleEngine();
     
     if (upPressed === true ) {
         if (faceY - faceSpeed > canvasStartY + faceRadius) {
