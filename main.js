@@ -53,7 +53,6 @@ let faceLowerYValue = faceY;
 //pringle range values 
 
 const spawnNewPringle = () =>  {
-    console.log('spawnNewPringle() reached')
     let newPringleYValue = Math.floor( Math.random() * (canvasWidth - pringleHeight) );
     pringleArr.push(
         {   
@@ -86,14 +85,6 @@ const verifyRespawnTimeHasPassed = () => {
     let withinTenMillisecondsLessThanTimeBetweenRespawns = Date.now() - lastPringleSpawnTime > timeBetweenRespawns - tenPercentOfTimeBetweenRespawns;
     let withinTenMillisecondsGreaterThanTimeBetweenRespawns = Date.now() - lastPringleSpawnTime < timeBetweenRespawns + tenPercentOfTimeBetweenRespawns;
     
-    console.log(Date.now() - lastPringleSpawnTime, timeBetweenRespawns - tenPercentOfTimeBetweenRespawns, timeBetweenRespawns + tenPercentOfTimeBetweenRespawns)
-    // console.log('timeBetweenRespawns is: ' + timeBetweenRespawns)
-    // console.log('tenPercentOfTimeBetweenRespawns is ' + tenPercentOfTimeBetweenRespawns)
-    // console.log('if-condition is: ' + (withinTenMillisecondsLessThanTimeBetweenRespawns && withinTenMillisecondsGreaterThanTimeBetweenRespawns))
-
-    // console.log('time passed since last respawn: ' + (Date.now() - lastPringleSpawnTime));
-    // console.log('verify respawn time has passed: ' + withinTenMillisecondsLessThanTimeBetweenRespawns )
-
     if (withinTenMillisecondsLessThanTimeBetweenRespawns && withinTenMillisecondsGreaterThanTimeBetweenRespawns) {
         lastPringleSpawnTime = Date.now()
         return true;
@@ -104,7 +95,6 @@ const verifyRespawnTimeHasPassed = () => {
 }
 
 const verifyGameHasStarted = () => {
-    // console.log('verifyGameHasStarted() reached')
     let withinTenMillisecondsOfGameStart = Date.now()  < timeAtBeginningOfGame + 10;
     if (withinTenMillisecondsOfGameStart) {
         timeAtBeginningOfGame = - 100 // ensures only one crisp renders at the beginning 
@@ -117,10 +107,7 @@ const verifyGameHasStarted = () => {
 
 
 const pringleTimeElapsed = () => {
-     console.log('verifyRespawnTimeHasPassed returns: ' + verifyRespawnTimeHasPassed());
-    // console.log('pringleTimeElapsed() reached')
     if ( verifyRespawnTimeHasPassed() || verifyGameHasStarted()) { // this is the pain point
-        console.log('pringleTimeElapsed() if-condition passed')
         return true;
     }
     else {
@@ -164,20 +151,15 @@ const updateIfPringleYValuesInFaceRange = () => {
 }
 
 const drawPringle = () => {
-    console.log('drawPringle() reached')
     for (let i = 0; i < pringleArr.length; i++) {
         ctx.drawImage(img, pringleArr[i].pringleCurrentXValue, pringleArr[i].pringleYValue, pringleWidth, pringleHeight);
     }
 }
 
 const drawPringleEngine = () => {
-    console.log('drawPringleEngine() reached')
-    console.log('pringleTimeElapsed condition  returns ' + pringleTimeElapsed() )
     if (pringleTimeElapsed()) { //pain point
         spawnNewPringle();
     }
-
-    // console.log('pringleArr is: ' + pringleArr)
     for (let j = 0; j < pringleArr.length; j++) {
         if (pringleArr[j].pringleCurrentXValue > canvasStartX) {
             pringleArr[j].pringleCurrentXValue -= pringleSpeed;
@@ -204,7 +186,6 @@ const toggleModal = () => {
 }
 
 const drawFace = () => {
-    console.log('drawFace() reached')
     ctx.beginPath();
     ctx.arc(faceX, faceY, faceRadius, Math.PI*2.2 , Math.PI*1.8);
     ctx.lineTo(canvasStartX + faceRadius, faceY);
@@ -214,7 +195,6 @@ const drawFace = () => {
 }
 
 const draw = () => {
-    console.log('draw() reached')
     ctx.clearRect(canvasStartX, canvasStartY, canvas.width, canvas.height);
     ctx.fillStyle = '#66cccc';
     ctx.fillRect(canvasStartX, canvasStartY, canvasLength, canvasWidth);
