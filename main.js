@@ -28,8 +28,8 @@ const playAgainButton = document.querySelector('.play-again-button');
 let oldScore;
 
 // time values
-let timeAtBeginningOfGame = performance.now();
-let lastPringleSpawnTime = performance.now(); 
+let timeAtBeginningOfGame = Date.now();
+let lastPringleSpawnTime = Date.now(); 
 let timeBetweenRespawns = 1200;
 let tenPercentOfTimeBetweenRespawns = timeBetweenRespawns / 10;
 
@@ -83,19 +83,19 @@ const keyUpHandler = e => {
     }
 }
 const verifyRespawnTimeHasPassed = () => {
-    let withinTenMillisecondsLessThanTimeBetweenRespawns = performance.now() - lastPringleSpawnTime > timeBetweenRespawns - tenPercentOfTimeBetweenRespawns;
-    let withinTenMillisecondsGreaterThanTimeBetweenRespawns = performance.now() - lastPringleSpawnTime < timeBetweenRespawns + tenPercentOfTimeBetweenRespawns;
+    let withinTenMillisecondsLessThanTimeBetweenRespawns = Date.now() - lastPringleSpawnTime > timeBetweenRespawns - tenPercentOfTimeBetweenRespawns;
+    let withinTenMillisecondsGreaterThanTimeBetweenRespawns = Date.now() - lastPringleSpawnTime < timeBetweenRespawns + tenPercentOfTimeBetweenRespawns;
     
-    console.log(performance.now() - lastPringleSpawnTime, timeBetweenRespawns - tenPercentOfTimeBetweenRespawns, timeBetweenRespawns + tenPercentOfTimeBetweenRespawns)
+    console.log(Date.now() - lastPringleSpawnTime, timeBetweenRespawns - tenPercentOfTimeBetweenRespawns, timeBetweenRespawns + tenPercentOfTimeBetweenRespawns)
     // console.log('timeBetweenRespawns is: ' + timeBetweenRespawns)
     // console.log('tenPercentOfTimeBetweenRespawns is ' + tenPercentOfTimeBetweenRespawns)
     // console.log('if-condition is: ' + (withinTenMillisecondsLessThanTimeBetweenRespawns && withinTenMillisecondsGreaterThanTimeBetweenRespawns))
 
-    // console.log('time passed since last respawn: ' + (performance.now() - lastPringleSpawnTime));
+    // console.log('time passed since last respawn: ' + (Date.now() - lastPringleSpawnTime));
     // console.log('verify respawn time has passed: ' + withinTenMillisecondsLessThanTimeBetweenRespawns )
 
     if (withinTenMillisecondsLessThanTimeBetweenRespawns && withinTenMillisecondsGreaterThanTimeBetweenRespawns) {
-        lastPringleSpawnTime = performance.now()
+        lastPringleSpawnTime = Date.now()
         return true;
     }
     else {
@@ -105,7 +105,7 @@ const verifyRespawnTimeHasPassed = () => {
 
 const verifyGameHasStarted = () => {
     // console.log('verifyGameHasStarted() reached')
-    let withinTenMillisecondsOfGameStart = performance.now()  < timeAtBeginningOfGame + 10;
+    let withinTenMillisecondsOfGameStart = Date.now()  < timeAtBeginningOfGame + 10;
     if (withinTenMillisecondsOfGameStart) {
         timeAtBeginningOfGame = - 100 // ensures only one crisp renders at the beginning 
         return true;
