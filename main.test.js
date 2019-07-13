@@ -52,6 +52,8 @@ document.body.innerHTML =
 let modal = document.getElementById('modal');
 let sound = document.createElement('audio') ; 
 
+let functions = require('./main.js')
+
 const generatePringleSpawnValue = jest.fn(() => {
     pringleYValue = Math.floor( Math.random() * (canvasWidth - pringleHeight) );
     pringleUpperYValue = pringleYValue + pringleHeight;

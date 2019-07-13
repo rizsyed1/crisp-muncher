@@ -14,7 +14,6 @@ let faceSpeed = 10;
 //pringle values
 let pringleHeight = 20;
 let pringleWidth = 50;
-// let pringleCurrentXValue = canvasLength + 60;
 let pringleStartingXValue = canvasLength + 60;
 let pringleSpeed = 4;
 let pringleArr = [];
@@ -52,7 +51,7 @@ let faceLowerYValue = faceY;
 
 //pringle range values 
 
-const spawnNewPringle = () =>  {
+function spawnNewPringle() {
     let newPringleYValue = Math.floor( Math.random() * (canvasWidth - pringleHeight) );
     pringleArr.push(
         {   
@@ -64,7 +63,7 @@ const spawnNewPringle = () =>  {
     );
 }
 
-const keyDownHandler = e => {
+function keyDownHandler(e) {
     if (e.keyCode === 38) {
         upPressed = true; 
     }
@@ -73,7 +72,7 @@ const keyDownHandler = e => {
     }
 }
 
-const keyUpHandler = e => {
+function keyUpHandler(e) {
     if (e.keyCode === 38) {
         upPressed = false;
     }
@@ -81,7 +80,8 @@ const keyUpHandler = e => {
         downPressed = false;
     }
 }
-const verifyRespawnTimeHasPassed = () => {
+
+function verifyRespawnTimeHasPassed() {
     let withinTenMillisecondsLessThanTimeBetweenRespawns = Date.now() - lastPringleSpawnTime > timeBetweenRespawns - tenPercentOfTimeBetweenRespawns;
     let withinTenMillisecondsGreaterThanTimeBetweenRespawns = Date.now() - lastPringleSpawnTime < timeBetweenRespawns + tenPercentOfTimeBetweenRespawns;
     
@@ -94,7 +94,7 @@ const verifyRespawnTimeHasPassed = () => {
     }
 }
 
-const verifyGameHasStarted = () => {
+function verifyGameHasStarted() {
     let withinTenMillisecondsOfGameStart = Date.now()  < timeAtBeginningOfGame + 10;
     if (withinTenMillisecondsOfGameStart) {
         timeAtBeginningOfGame = - 100 // ensures only one crisp renders at the beginning 
@@ -106,7 +106,7 @@ const verifyGameHasStarted = () => {
 }
 
 
-const pringleTimeElapsed = () => {
+function pringleTimeElapsed() {
     if ( verifyRespawnTimeHasPassed() || verifyGameHasStarted()) { // this is the pain point
         return true;
     }
@@ -115,13 +115,13 @@ const pringleTimeElapsed = () => {
     }
 }
 
-const incrementScore = () => {
+function incrementScore() {
     score += 1;
     oldScore = document.getElementById('scoreNumber');
     oldScore.textContent = score;
 };
 
-const playCollisionSound = () => {
+function playCollisionSound() {
     sound.setAttribute('preload', 'auto');
     sound.setAttribute('controls', 'none');
     sound.style.display = 'none'; 
@@ -129,7 +129,7 @@ const playCollisionSound = () => {
     sound.play();
 }
 
-const collision = async() => {
+async function collision() {
     incrementScore();
     pringleArr.shift()
     pringleSpeed += 0.3;
@@ -141,7 +141,7 @@ const collision = async() => {
     await playCollisionSound();
 };
 
-const updateIfPringleYValuesInFaceRange = () => {
+function updateIfPringleYValuesInFaceRange() {
     for (let k = 0; k < pringleArr.length; k++) {
         let pringleUpperYValue = pringleArr[k].pringleYValue + pringleHeight;
         let pringleLowerYValue = pringleArr[k].pringleYValue;
@@ -150,13 +150,13 @@ const updateIfPringleYValuesInFaceRange = () => {
     }
 }
 
-const drawPringle = () => {
+function drawPringle() {
     for (let i = 0; i < pringleArr.length; i++) {
         ctx.drawImage(img, pringleArr[i].pringleCurrentXValue, pringleArr[i].pringleYValue, pringleWidth, pringleHeight);
     }
 }
 
-const drawPringleEngine = () => {
+function drawPringleEngine() {
     if (pringleTimeElapsed()) { //pain point
         spawnNewPringle();
     }
@@ -178,14 +178,14 @@ const drawPringleEngine = () => {
     }
 }
 
-const toggleModal = () => {
+function toggleModal() {
     modal.classList.toggle('show-modal');
     if (modal.className === 'modal') {
         document.location.reload();
     }
 }
 
-const drawFace = () => {
+function drawFace() {
     ctx.beginPath();
     ctx.arc(faceX, faceY, faceRadius, Math.PI*2.2 , Math.PI*1.8);
     ctx.lineTo(canvasStartX + faceRadius, faceY);
@@ -194,7 +194,7 @@ const drawFace = () => {
     ctx.closePath();
 }
 
-const draw = () => {
+function draw() {
     ctx.clearRect(canvasStartX, canvasStartY, canvas.width, canvas.height);
     ctx.fillStyle = '#66cccc';
     ctx.fillRect(canvasStartX, canvasStartY, canvasLength, canvasWidth);
@@ -220,9 +220,30 @@ const draw = () => {
     }
 }
 
-const assignFaceYValues = () => {
+function assignFaceYValues() {
     faceUpperYValue =  faceY + faceRadius;
     faceLowerYValue = faceY - faceRadius;
+}
+
+if(typeof exports === 'object') {
+    module.exports = {
+        spawnNewPringle,
+        keyDownHandler,
+        keyUpHandler,
+        verifyRespawnTimeHasPassed,
+        verifyGameHasStarted,
+        pringleTimeElapsed,
+        incrementScore,
+        playCollisionSound,
+        collision,
+        updateIfPringleYValuesInFaceRange,
+        drawPringle,
+        drawPringleEngine,
+        toggleModal,
+        drawFace,
+        draw,
+        assignFaceYValues
+    }
 }
 
 document.addEventListener('keydown', keyDownHandler, false);
