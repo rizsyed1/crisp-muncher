@@ -87,7 +87,6 @@ const playCollisionSound = jest.fn(() => {
 });
  
 const collision = jest.fn( async() => {
-    console.log('collision() reached');
     incrementScore();
     pringleSpeed += 0.3;
     if (faceRadius >= 7){
@@ -122,7 +121,6 @@ const drawPringleEngine = jest.fn(async () => {
         async img => {
             if (pringleCurrentXValue > canvasStartX) {
                 if (pringleCurrentXValue <= faceX + faceRadius && (pringleLowerYValueInFaceRange || pringleUpperYValueInFaceRange) ) {
-                    console
                     collision()
         
                 }
@@ -193,7 +191,8 @@ beforeEach(() => {
     score = 0;
 });
 
-test ('pressing the up arrow moves the face up & letting go of up arrow key leaves face in position', async () => {
+test.only('pressing the up arrow moves the face up & letting go of up arrow key leaves face in position', async () => {
+    // const { toggleModal } = functions; - how to access function in module.exports
     let event = new KeyboardEvent('keydown', {keyCode: 38});
     document.dispatchEvent(event);
     await draw();

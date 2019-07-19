@@ -49,21 +49,38 @@ let requestID;
 let faceUpperYValue = faceY + faceRadius;
 let faceLowerYValue = faceY;
 
-//pringle range values 
+const spawnNewPringle = () => {
+    if (pringleArr.length > 0) {
+        let lastPringleYValue = pringleArr[pringleArr.length - 1].pringleYValue;; 
+        let lastPringleYValueTopOfRange = lastPringleYValue + canvas.width / 6;
+        let lastPringleYValueBottomOfRange = lastPringleYValue - canvas.width / 6;
+        let lastPringleRange = lastPringleYValueTopOfRange - lastPringleYValueBottomOfRange;
 
-function spawnNewPringle() {
-    let newPringleYValue = Math.floor( Math.random() * (canvasWidth - pringleHeight) );
-    pringleArr.push(
-        {   
-            pringleYValue: newPringleYValue, 
-            pringleCurrentXValue : pringleStartingXValue,
-            pringleLowerYValueInFaceRange: false,
-            pringleUpperYValueInFaceRange: false
-        }
-    );
-}
+        let newPringleYValue = Math.floor( Math.random() * ( (lastPringleRange) - pringleHeight) );
+        console.log(newPringleYValue);
+        pringleArr.push(
+            {   
+                pringleYValue: newPringleYValue, 
+                pringleCurrentXValue : pringleStartingXValue,
+                pringleLowerYValueInFaceRange: false,
+                pringleUpperYValueInFaceRange: false
+            }
+        );
+    }
+    else {
+        let newPringleYValue = Math.floor( Math.random() * ( canvasLength - pringleHeight) );
+        pringleArr.push(
+            {   
+                pringleYValue: newPringleYValue, 
+                pringleCurrentXValue : pringleStartingXValue,
+                pringleLowerYValueInFaceRange: false,
+                pringleUpperYValueInFaceRange: false
+            }
+        );
+    }  
+};
 
-function keyDownHandler(e) {
+const keyDownHandler = e => {
     if (e.keyCode === 38) {
         upPressed = true; 
     }
@@ -72,7 +89,7 @@ function keyDownHandler(e) {
     }
 }
 
-function keyUpHandler(e) {
+const keyUpHandler = e => {
     if (e.keyCode === 38) {
         upPressed = false;
     }
@@ -81,7 +98,7 @@ function keyUpHandler(e) {
     }
 }
 
-function verifyRespawnTimeHasPassed() {
+const verifyRespawnTimeHasPassed = () => {
     let withinTenMillisecondsLessThanTimeBetweenRespawns = Date.now() - lastPringleSpawnTime > timeBetweenRespawns - tenPercentOfTimeBetweenRespawns;
     let withinTenMillisecondsGreaterThanTimeBetweenRespawns = Date.now() - lastPringleSpawnTime < timeBetweenRespawns + tenPercentOfTimeBetweenRespawns;
     
@@ -94,7 +111,7 @@ function verifyRespawnTimeHasPassed() {
     }
 }
 
-function verifyGameHasStarted() {
+const verifyGameHasStarted = () => {
     let withinTenMillisecondsOfGameStart = Date.now()  < timeAtBeginningOfGame + 10;
     if (withinTenMillisecondsOfGameStart) {
         timeAtBeginningOfGame = - 100 // ensures only one crisp renders at the beginning 
@@ -103,25 +120,25 @@ function verifyGameHasStarted() {
     else {
         return false;
     }
-}
+};
 
 
-function pringleTimeElapsed() {
-    if ( verifyRespawnTimeHasPassed() || verifyGameHasStarted()) { // this is the pain point
+const pringleTimeElapsed = () => {
+    if ( verifyRespawnTimeHasPassed() || verifyGameHasStarted()) { 
         return true;
     }
     else {
         return false;
     }
-}
+};
 
-function incrementScore() {
+const incrementScore = () => {
     score += 1;
     oldScore = document.getElementById('scoreNumber');
     oldScore.textContent = score;
 };
 
-function playCollisionSound() {
+const playCollisionSound = () => {
     sound.setAttribute('preload', 'auto');
     sound.setAttribute('controls', 'none');
     sound.style.display = 'none'; 
@@ -129,7 +146,7 @@ function playCollisionSound() {
     sound.play();
 }
 
-async function collision() {
+ const collision = async () => {
     incrementScore();
     pringleArr.shift()
     pringleSpeed += 0.3;
@@ -141,7 +158,7 @@ async function collision() {
     await playCollisionSound();
 };
 
-function updateIfPringleYValuesInFaceRange() {
+const updateIfPringleYValuesInFaceRange = () =>  {
     for (let k = 0; k < pringleArr.length; k++) {
         let pringleUpperYValue = pringleArr[k].pringleYValue + pringleHeight;
         let pringleLowerYValue = pringleArr[k].pringleYValue;
@@ -150,13 +167,13 @@ function updateIfPringleYValuesInFaceRange() {
     }
 }
 
-function drawPringle() {
+const drawPringle = () => {
     for (let i = 0; i < pringleArr.length; i++) {
         ctx.drawImage(img, pringleArr[i].pringleCurrentXValue, pringleArr[i].pringleYValue, pringleWidth, pringleHeight);
     }
 }
 
-function drawPringleEngine() {
+const drawPringleEngine = () => {
     if (pringleTimeElapsed()) { //pain point
         spawnNewPringle();
     }
@@ -178,14 +195,14 @@ function drawPringleEngine() {
     }
 }
 
-function toggleModal() {
+const toggleModal = () => {
     modal.classList.toggle('show-modal');
     if (modal.className === 'modal') {
         document.location.reload();
     }
 }
 
-function drawFace() {
+const drawFace = () => {
     ctx.beginPath();
     ctx.arc(faceX, faceY, faceRadius, Math.PI*2.2 , Math.PI*1.8);
     ctx.lineTo(canvasStartX + faceRadius, faceY);
@@ -194,12 +211,11 @@ function drawFace() {
     ctx.closePath();
 }
 
-function draw() {
+const draw = () => {
     ctx.clearRect(canvasStartX, canvasStartY, canvas.width, canvas.height);
     ctx.fillStyle = '#66cccc';
     ctx.fillRect(canvasStartX, canvasStartY, canvasLength, canvasWidth);
     drawFace();
-    //insert if-condition here so drawPringleEngine() is called every three seconds
     drawPringleEngine();
     
     if (upPressed === true ) {
@@ -220,30 +236,9 @@ function draw() {
     }
 }
 
-function assignFaceYValues() {
+const assignFaceYValues = () => {
     faceUpperYValue =  faceY + faceRadius;
     faceLowerYValue = faceY - faceRadius;
-}
-
-if(typeof exports === 'object') {
-    module.exports = {
-        spawnNewPringle,
-        keyDownHandler,
-        keyUpHandler,
-        verifyRespawnTimeHasPassed,
-        verifyGameHasStarted,
-        pringleTimeElapsed,
-        incrementScore,
-        playCollisionSound,
-        collision,
-        updateIfPringleYValuesInFaceRange,
-        drawPringle,
-        drawPringleEngine,
-        toggleModal,
-        drawFace,
-        draw,
-        assignFaceYValues
-    }
 }
 
 document.addEventListener('keydown', keyDownHandler, false);
