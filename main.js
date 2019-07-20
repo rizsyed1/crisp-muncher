@@ -48,16 +48,30 @@ let requestID;
 // Face range values
 let faceUpperYValue = faceY + faceRadius;
 let faceLowerYValue = faceY;
-
 const spawnNewPringle = () => {
     if (pringleArr.length > 0) {
-        let lastPringleYValue = pringleArr[pringleArr.length - 1].pringleYValue;; 
-        let lastPringleYValueTopOfRange = lastPringleYValue + canvas.width / 6;
-        let lastPringleYValueBottomOfRange = lastPringleYValue - canvas.width / 6;
-        let lastPringleRange = lastPringleYValueTopOfRange - lastPringleYValueBottomOfRange;
+        let lastPringleYValue = pringleArr[pringleArr.length - 1].pringleYValue; 
+        let rawPringleYValue = Math.floor( Math.random() *  (canvasWidth / 4) );
+        let aboveOrBelow = Math.random();
+        let newPringleYValue;
 
-        let newPringleYValue = Math.floor( Math.random() * ( (lastPringleRange) - pringleHeight) );
-        console.log(newPringleYValue);
+        if (aboveOrBelow > 0.5 ) {
+            if ( (lastPringleYValue + rawPringleYValue) <= (canvasWidth - pringleHeight) ){
+                newPringleYValue = lastPringleYValue + rawPringleYValue;
+            }
+            else {
+                newPringleYValue = lastPringleYValue - rawPringleYValue;
+            }
+        }
+        else {
+            if ( (lastPringleYValue - rawPringleYValue) >= pringleHeight ){
+                newPringleYValue = lastPringleYValue - rawPringleYValue; 
+            }
+            else {
+                newPringleYValue = lastPringleYValue + rawPringleYValue;  
+            }
+        }
+
         pringleArr.push(
             {   
                 pringleYValue: newPringleYValue, 
@@ -68,7 +82,7 @@ const spawnNewPringle = () => {
         );
     }
     else {
-        let newPringleYValue = Math.floor( Math.random() * ( canvasLength - pringleHeight) );
+        let newPringleYValue = Math.floor( Math.random() * ( canvasWidth - pringleHeight) );
         pringleArr.push(
             {   
                 pringleYValue: newPringleYValue, 
@@ -114,7 +128,7 @@ const verifyRespawnTimeHasPassed = () => {
 const verifyGameHasStarted = () => {
     let withinTenMillisecondsOfGameStart = Date.now()  < timeAtBeginningOfGame + 10;
     if (withinTenMillisecondsOfGameStart) {
-        timeAtBeginningOfGame = - 100 // ensures only one crisp renders at the beginning 
+        timeAtBeginningOfGame = - 100 
         return true;
     }
     else {
@@ -174,7 +188,7 @@ const drawPringle = () => {
 }
 
 const drawPringleEngine = () => {
-    if (pringleTimeElapsed()) { //pain point
+    if (pringleTimeElapsed()) {
         spawnNewPringle();
     }
     for (let j = 0; j < pringleArr.length; j++) {
