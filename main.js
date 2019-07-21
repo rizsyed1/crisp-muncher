@@ -120,20 +120,24 @@ const spawnNewPringle = () => {
     }  
 };
 
+const arrowUp = 38;
+const arrowDown = 40;
+const wKey = 87;
+const sKey = 83;
 const keyDownHandler = e => {
-    if (e.keyCode === 38) {
+    if (e.keyCode === arrowUp || e.keyCode === wKey) {
         upPressed = true; 
     }
-    else if (e.keyCode === 40) {
+    else if (e.keyCode === arrowDown || e.keyCode === sKey) {
         downPressed = true;
     }
 }
 
 const keyUpHandler = e => {
-    if (e.keyCode === 38) {
+    if (e.keyCode === arrowUp || e.keyCode === wKey) {
         upPressed = false;
     }
-    else if (e.keyCode === 40) {
+    else if (e.keyCode === arrowDown || e.keyCode === sKey) {
         downPressed = false;
     }
 }
