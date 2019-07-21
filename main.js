@@ -7,6 +7,15 @@ const playButton = document.querySelector('.play-button');
 const oldScore = document.getElementById('scoreNumber');
 const scoreComponent = document.getElementById('score');
 
+// background music 
+const backgroundMusic = document.createElement('audio');
+backgroundMusic.src = 'background-music.mp3';
+backgroundMusic.setAttribute('preload', 'auto');
+backgroundMusic.setAttribute('controls', 'none');
+backgroundMusic.style.display = 'none'; 
+backgroundMusic.volume = 0.6
+document.body.appendChild(backgroundMusic);
+
 let canvasLength = 520;
 let canvasWidth = 320; 
 let canvasStartX = 0;
@@ -40,12 +49,12 @@ let img = new Image();
 img.src = 'pringle.png';
 
 // audio element
-let sound = document.createElement('audio');
-sound.src = 'crisp-munch.mp3';
-sound.setAttribute('preload', 'auto');
-sound.setAttribute('controls', 'none');
-sound.style.display = 'none'; 
-document.body.appendChild(sound);
+const crispSound = document.createElement('audio');
+crispSound.src = 'crisp-munch.mp3';
+crispSound.setAttribute('preload', 'auto');
+crispSound.setAttribute('controls', 'none');
+crispSound.style.display = 'none'; 
+document.body.appendChild(crispSound);
 
 let score = 0;
 
@@ -55,6 +64,14 @@ let requestID;
 // Face range values
 let faceUpperYValue = faceY + faceRadius;
 let faceLowerYValue = faceY;
+
+const startBackgroundMusic = () => {
+    backgroundMusic.play()
+}
+
+const stopBackgroundMusic = () => {
+    backgroundMusic.currentTime = 0;
+}
 
 
 const spawnNewPringle = () => {
@@ -161,11 +178,11 @@ const incrementScore = () => {
 };
 
 const playCollisionSound = () => {
-    if (sound.paused) {
-        sound.play();
+    if (crispSound.paused) {
+        crispSound.play();
     }
     else{
-        sound.currentTime = 0;
+        crispSound.currentTime = 0;
     }
     
 }
@@ -223,6 +240,9 @@ const drawPringleEngine = () => {
 
 const toggleModal = () => {
     modal.classList.toggle('show-modal');
+    if(modal.className === 'modal show-modal') {
+        backgroundMusic.pause()
+    }
     if (modal.className === 'modal') {
         playAgain()
     }
@@ -233,7 +253,9 @@ const playAgain = () => {
     oldScore.textContent = score;
     animateAgain = true; 
     resetGlobalStateToDefault()
-    draw();
+    backgroundMusic.currentTime = 0;
+    backgroundMusic.play()
+    requestID = requestAnimationFrame(draw);
 }
 
 const resetGlobalStateToDefault = () => {
@@ -258,6 +280,7 @@ const drawFace = () => {
 };
 
 const draw = () => {
+    console.log(typeof backgroundMusic.volume)
     ctx.clearRect(canvasStartX, canvasStartY, canvas.width, canvas.height);
     ctx.fillStyle = '#66cccc';
     ctx.fillRect(canvasStartX, canvasStartY, canvasLength, canvasWidth);
@@ -293,6 +316,7 @@ const toggleStartScreen = () => {
     scoreComponent.classList.toggle('show-score');
     timeAtBeginningOfGame = Date.now();
     lastPringleSpawnTime = Date.now(); 
+    backgroundMusic.play()
     requestID = requestAnimationFrame(draw);
 }
 
