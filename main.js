@@ -147,9 +147,7 @@ const verifyGameHasStarted = () => {
 
 
 const pringleTimeElapsed = () => {
-    console.log('pringleTimeElapsed() reached')
     if ( verifyRespawnTimeHasPassed() || verifyGameHasStarted()) { 
-        console.log('timePassed if-condition passed')
         return true;
     }
     else {
@@ -202,7 +200,6 @@ const drawPringle = () => {
 }
 
 const drawPringleEngine = () => {
-    console.log('drawPringle() reached')
     if (pringleTimeElapsed()) {
         spawnNewPringle();
     }
@@ -240,7 +237,6 @@ const playAgain = () => {
 }
 
 const resetGlobalStateToDefault = () => {
-    console.log('resetGlobalStatetoDefault() reached')
     faceRadius = 20;
     faceX = canvasStartX + faceRadius;
     faceY = canvasWidth / 2;
