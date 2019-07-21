@@ -1,5 +1,12 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
+const modal = document.querySelector('.modal');
+const startScreen = document.querySelector('.starting-screen')
+const playAgainButton = document.querySelector('.play-again-button');
+const playButton = document.querySelector('.play-button');
+const oldScore = document.getElementById('scoreNumber');
+const scoreComponent = document.getElementById('score');
+
 let canvasLength = 520;
 let canvasWidth = 320; 
 let canvasStartX = 0;
@@ -8,7 +15,7 @@ let canvasStartY = 0;
 // face values
 let faceRadius = 20;
 let faceX = canvasStartX + faceRadius;
-let faceY = faceRadius + 10;
+let faceY = canvasWidth / 2;
 let faceSpeed = 10;
 
 //pringle values
@@ -22,13 +29,9 @@ let upPressed = false;
 let downPressed = false;
 let animateAgain = true;
 
-const modal = document.querySelector('.modal');
-const playAgainButton = document.querySelector('.play-again-button');
-let oldScore;
-
 // time values
-let timeAtBeginningOfGame = Date.now();
-let lastPringleSpawnTime = Date.now(); 
+let timeAtBeginningOfGame;
+let lastPringleSpawnTime  
 let timeBetweenRespawns = 1200;
 let tenPercentOfTimeBetweenRespawns = timeBetweenRespawns / 10;
 
@@ -36,9 +39,13 @@ let tenPercentOfTimeBetweenRespawns = timeBetweenRespawns / 10;
 let img = new Image();
 img.src = 'pringle.png';
 
-// sound element
+// audio element
 let sound = document.createElement('audio');
 sound.src = 'crisp-munch.mp3';
+sound.setAttribute('preload', 'auto');
+sound.setAttribute('controls', 'none');
+sound.style.display = 'none'; 
+document.body.appendChild(sound);
 
 let score = 0;
 
@@ -48,15 +55,17 @@ let requestID;
 // Face range values
 let faceUpperYValue = faceY + faceRadius;
 let faceLowerYValue = faceY;
+
+
 const spawnNewPringle = () => {
     if (pringleArr.length > 0) {
         let lastPringleYValue = pringleArr[pringleArr.length - 1].pringleYValue; 
-        let rawPringleYValue = Math.floor( Math.random() *  (canvasWidth / 4) );
+        let rawPringleYValue = Math.floor( Math.random() *  (canvasWidth / 4) ); // ensures that the next pringle only spawns 1/4 of canvas width from last one.
         let aboveOrBelow = Math.random();
         let newPringleYValue;
 
-        if (aboveOrBelow > 0.5 ) {
-            if ( (lastPringleYValue + rawPringleYValue) <= (canvasWidth - pringleHeight) ){
+        if (aboveOrBelow > 0.5 ) { // randomises location of next pringle spawn 
+            if ( (lastPringleYValue + rawPringleYValue) <= (canvasWidth - pringleHeight) ){ // ensures canvas doesn't spawn outside of canvas
                 newPringleYValue = lastPringleYValue + rawPringleYValue;
             }
             else {
@@ -64,7 +73,7 @@ const spawnNewPringle = () => {
             }
         }
         else {
-            if ( (lastPringleYValue - rawPringleYValue) >= pringleHeight ){
+            if ( (lastPringleYValue - rawPringleYValue) >= pringleHeight ){// ensures canvas doesn't spawn outside of canvas
                 newPringleYValue = lastPringleYValue - rawPringleYValue; 
             }
             else {
@@ -123,7 +132,7 @@ const verifyRespawnTimeHasPassed = () => {
     else {
         return false;
     }
-}
+};
 
 const verifyGameHasStarted = () => {
     let withinTenMillisecondsOfGameStart = Date.now()  < timeAtBeginningOfGame + 10;
@@ -138,7 +147,9 @@ const verifyGameHasStarted = () => {
 
 
 const pringleTimeElapsed = () => {
+    console.log('pringleTimeElapsed() reached')
     if ( verifyRespawnTimeHasPassed() || verifyGameHasStarted()) { 
+        console.log('timePassed if-condition passed')
         return true;
     }
     else {
@@ -148,23 +159,26 @@ const pringleTimeElapsed = () => {
 
 const incrementScore = () => {
     score += 1;
-    oldScore = document.getElementById('scoreNumber');
     oldScore.textContent = score;
 };
 
 const playCollisionSound = () => {
-    sound.setAttribute('preload', 'auto');
-    sound.setAttribute('controls', 'none');
-    sound.style.display = 'none'; 
-    document.body.appendChild(sound);
-    sound.play();
+    if (sound.paused) {
+        sound.play();
+    }
+    else{
+        sound.currentTime = 0;
+    }
+    
 }
 
  const collision = async () => {
     incrementScore();
     pringleArr.shift()
     pringleSpeed += 0.3;
-    timeBetweenRespawns -= 50;
+    if (timeBetweenRespawns > 700){
+        timeBetweenRespawns -= 50;
+    }
     tenPercentOfTimeBetweenRespawns = timeBetweenRespawns / 10;
     if (faceRadius >= 7){
         faceRadius -= 0.3;
@@ -188,6 +202,7 @@ const drawPringle = () => {
 }
 
 const drawPringleEngine = () => {
+    console.log('drawPringle() reached')
     if (pringleTimeElapsed()) {
         spawnNewPringle();
     }
@@ -207,13 +222,34 @@ const drawPringleEngine = () => {
             break
         }
     }
-}
+};
 
 const toggleModal = () => {
     modal.classList.toggle('show-modal');
     if (modal.className === 'modal') {
-        document.location.reload();
+        playAgain()
     }
+};
+
+const playAgain = () => {
+    score = 0;
+    oldScore.textContent = score;
+    animateAgain = true; 
+    resetGlobalStateToDefault()
+    draw();
+}
+
+const resetGlobalStateToDefault = () => {
+    console.log('resetGlobalStatetoDefault() reached')
+    faceRadius = 20;
+    faceX = canvasStartX + faceRadius;
+    faceY = canvasWidth / 2;
+    faceSpeed = 10;
+    pringleSpeed = 4;
+    pringleArr = [];
+    timeBetweenRespawns = 1200;
+    timeAtBeginningOfGame = Date.now();
+    lastPringleSpawnTime = Date.now(); 
 }
 
 const drawFace = () => {
@@ -223,7 +259,7 @@ const drawFace = () => {
     ctx.fillStyle = 'black';
     ctx.fill();
     ctx.closePath();
-}
+};
 
 const draw = () => {
     ctx.clearRect(canvasStartX, canvasStartY, canvas.width, canvas.height);
@@ -255,11 +291,21 @@ const assignFaceYValues = () => {
     faceLowerYValue = faceY - faceRadius;
 }
 
+const toggleStartScreen = () => {
+    event.preventDefault();
+    startScreen.remove();
+    scoreComponent.classList.toggle('show-score');
+    timeAtBeginningOfGame = Date.now();
+    lastPringleSpawnTime = Date.now(); 
+    requestID = requestAnimationFrame(draw);
+}
+
 document.addEventListener('keydown', keyDownHandler, false);
 document.addEventListener('keyup', keyUpHandler, false);
 playAgainButton.addEventListener('click', toggleModal);
+playButton.addEventListener('click', toggleStartScreen)
 
-requestID = requestAnimationFrame(draw);
+
 
 
 
