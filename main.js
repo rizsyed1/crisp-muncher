@@ -10,8 +10,8 @@ const scoreComponent = document.getElementById('score');
 // background music 
 const backgroundMusic = document.createElement('audio');
 backgroundMusic.src = 'background-music.mp3';
-backgroundMusic.setAttribute('preload', 'auto');
-backgroundMusic.setAttribute('controls', 'none');
+backgroundMusic.preload = 'auto';
+backgroundMusic.controls = 'none';
 backgroundMusic.style.display = 'none'; 
 backgroundMusic.volume = 0.6
 document.body.appendChild(backgroundMusic);
