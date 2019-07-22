@@ -284,7 +284,6 @@ const drawFace = () => {
 };
 
 const draw = () => {
-    console.log(typeof backgroundMusic.volume)
     ctx.clearRect(canvasStartX, canvasStartY, canvas.width, canvas.height);
     ctx.fillStyle = '#66cccc';
     ctx.fillRect(canvasStartX, canvasStartY, canvasLength, canvasWidth);
