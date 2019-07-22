@@ -65,6 +65,12 @@ let requestID;
 let faceUpperYValue = faceY + faceRadius;
 let faceLowerYValue = faceY;
 
+// key values
+const arrowUp = 38;
+const arrowDown = 40;
+const wKey = 87;
+const sKey = 83;
+
 const startBackgroundMusic = () => {
     backgroundMusic.play()
 }
@@ -120,10 +126,7 @@ const spawnNewPringle = () => {
     }  
 };
 
-const arrowUp = 38;
-const arrowDown = 40;
-const wKey = 87;
-const sKey = 83;
+
 const keyDownHandler = e => {
     if (e.keyCode === arrowUp || e.keyCode === wKey) {
         upPressed = true; 
@@ -314,12 +317,12 @@ const assignFaceYValues = () => {
 }
 
 const toggleStartScreen = () => {
-    startScreen.remove();
-    scoreComponent.classList.toggle('show-score');
-    timeAtBeginningOfGame = Date.now();
-    lastPringleSpawnTime = Date.now(); 
-    backgroundMusic.play();
-    requestID = requestAnimationFrame(draw);
+        startScreen.remove();
+        scoreComponent.classList.toggle('show-score');
+        timeAtBeginningOfGame = Date.now();
+        lastPringleSpawnTime = Date.now(); 
+        backgroundMusic.play();
+        requestID = requestAnimationFrame(draw);
 }
     
 
