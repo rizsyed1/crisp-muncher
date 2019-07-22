@@ -73,11 +73,11 @@ const sKey = 83;
 
 const startBackgroundMusic = () => {
     backgroundMusic.play();
-}
+}; 
 
 const stopBackgroundMusic = () => {
     backgroundMusic.currentTime = 0;
-}
+}; 
 
 
 const spawnNewPringle = () => {
