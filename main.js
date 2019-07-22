@@ -71,12 +71,6 @@ const arrowDown = 40;
 const wKey = 87;
 const sKey = 83;
 
-// key values
-const arrowUp = 38;
-const arrowDown = 40;
-const wKey = 87;
-const sKey = 83;
-
 const startBackgroundMusic = () => {
     backgroundMusic.play();
 }
