@@ -252,9 +252,9 @@ const playAgain = () => {
     score = 0;
     oldScore.textContent = score;
     animateAgain = true; 
-    resetGlobalStateToDefault()
     backgroundMusic.currentTime = 0;
     backgroundMusic.play()
+    resetGlobalStateToDefault()
     requestID = requestAnimationFrame(draw);
 }
 
@@ -311,14 +311,14 @@ const assignFaceYValues = () => {
 }
 
 const toggleStartScreen = () => {
-    event.preventDefault();
     startScreen.remove();
     scoreComponent.classList.toggle('show-score');
     timeAtBeginningOfGame = Date.now();
     lastPringleSpawnTime = Date.now(); 
-    backgroundMusic.play()
-    requestID = requestAnimationFrame(draw);
+    backgroundMusic.play();
+
 }
+    
 
 document.addEventListener('keydown', keyDownHandler, false);
 document.addEventListener('keyup', keyUpHandler, false);
