@@ -320,7 +320,9 @@ const toggleStartScreen = () => {
     timeAtBeginningOfGame = Date.now();
     lastPringleSpawnTime = Date.now(); 
     backgroundMusic.play();
-
+    window.onload = e => {
+        requestID = requestAnimationFrame(draw);
+    }
 }
     
 
