@@ -1,7 +1,7 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const modal = document.querySelector('.modal');
-const startScreen = document.querySelector('.starting-screen')
+const startScreen = document.querySelector('.starting-screen');
 const playAgainButton = document.querySelector('.play-again-button');
 const playButton = document.querySelector('.play-button');
 const oldScore = document.getElementById('scoreNumber');
@@ -13,7 +13,7 @@ backgroundMusic.src = 'background-music.mp3';
 backgroundMusic.preload = 'auto';
 backgroundMusic.controls = 'none';
 backgroundMusic.style.display = 'none'; 
-backgroundMusic.volume = 0.6
+backgroundMusic.volume = 0.6;
 document.body.appendChild(backgroundMusic);
 
 let canvasLength = 520;
@@ -40,7 +40,7 @@ let animateAgain = true;
 
 // time values
 let timeAtBeginningOfGame;
-let lastPringleSpawnTime  
+let lastPringleSpawnTime;  
 let timeBetweenRespawns = 1200;
 let tenPercentOfTimeBetweenRespawns = timeBetweenRespawns / 10;
 
@@ -63,10 +63,16 @@ let requestID;
 
 // Face range values
 let faceUpperYValue = faceY + faceRadius;
-let faceLowerYValue = faceY;
+let faceLowerYValue = faceY - faceRadius;
+
+//key values 
+const arrowUp = 38;
+const arrowDown = 40;
+const wKey = 87;
+const sKey = 83;
 
 const startBackgroundMusic = () => {
-    backgroundMusic.play()
+    backgroundMusic.play();
 }
 
 const stopBackgroundMusic = () => {
@@ -120,10 +126,7 @@ const spawnNewPringle = () => {
     }  
 };
 
-const arrowUp = 38;
-const arrowDown = 40;
-const wKey = 87;
-const sKey = 83;
+
 const keyDownHandler = e => {
     if (e.keyCode === arrowUp || e.keyCode === wKey) {
         upPressed = true; 
@@ -147,7 +150,7 @@ const verifyRespawnTimeHasPassed = () => {
     let withinTenMillisecondsGreaterThanTimeBetweenRespawns = Date.now() - lastPringleSpawnTime < timeBetweenRespawns + tenPercentOfTimeBetweenRespawns;
     
     if (withinTenMillisecondsLessThanTimeBetweenRespawns && withinTenMillisecondsGreaterThanTimeBetweenRespawns) {
-        lastPringleSpawnTime = Date.now()
+        lastPringleSpawnTime = Date.now();
         return true;
     }
     else {
@@ -158,7 +161,7 @@ const verifyRespawnTimeHasPassed = () => {
 const verifyGameHasStarted = () => {
     let withinTenMillisecondsOfGameStart = Date.now()  < timeAtBeginningOfGame + 10;
     if (withinTenMillisecondsOfGameStart) {
-        timeAtBeginningOfGame = - 100 
+        timeAtBeginningOfGame = - 100;
         return true;
     }
     else {
@@ -193,7 +196,7 @@ const playCollisionSound = () => {
 
  const collision = async () => {
     incrementScore();
-    pringleArr.shift()
+    pringleArr.shift();
     pringleSpeed += 0.3;
     if (timeBetweenRespawns > 700){
         timeBetweenRespawns -= 50;
@@ -237,7 +240,7 @@ const drawPringleEngine = () => {
         else {
             animateAgain = false;
             toggleModal();
-            break
+            break;
         }
     }
 };
@@ -245,10 +248,10 @@ const drawPringleEngine = () => {
 const toggleModal = () => {
     modal.classList.toggle('show-modal');
     if(modal.className === 'modal show-modal') {
-        backgroundMusic.pause()
+        backgroundMusic.pause();
     }
     if (modal.className === 'modal') {
-        playAgain()
+        playAgain();
     }
 };
 
@@ -257,8 +260,8 @@ const playAgain = () => {
     oldScore.textContent = score;
     animateAgain = true; 
     backgroundMusic.currentTime = 0;
-    backgroundMusic.play()
-    resetGlobalStateToDefault()
+    backgroundMusic.play();
+    resetGlobalStateToDefault();
     requestID = requestAnimationFrame(draw);
 }
 
@@ -292,19 +295,19 @@ const draw = () => {
     
     if (upPressed === true ) {
         if (faceY - faceSpeed > canvasStartY + faceRadius) {
-            faceY -= faceSpeed;-
-            assignFaceYValues()
+            faceY -= faceSpeed;
+            assignFaceYValues();
         }
     }
     else if (downPressed === true ) {
         if (faceY + faceSpeed < canvasWidth - faceRadius) {
             faceY += faceSpeed;
-            assignFaceYValues() 
+            assignFaceYValues();
         } 
     }
 
     if (animateAgain) {
-        requestAnimationFrame(draw)
+        requestAnimationFrame(draw);
     }
 }
 
@@ -326,7 +329,7 @@ const toggleStartScreen = () => {
 document.addEventListener('keydown', keyDownHandler, false);
 document.addEventListener('keyup', keyUpHandler, false);
 playAgainButton.addEventListener('click', toggleModal);
-playButton.addEventListener('click', toggleStartScreen)
+playButton.addEventListener('click', toggleStartScreen);
 
 
 
