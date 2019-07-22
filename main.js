@@ -134,7 +134,7 @@ const keyDownHandler = e => {
     else if (e.keyCode === arrowDown || e.keyCode === sKey) {
         downPressed = true;
     }
-}
+};
 
 const keyUpHandler = e => {
     if (e.keyCode === arrowUp || e.keyCode === wKey) {
@@ -143,7 +143,7 @@ const keyUpHandler = e => {
     else if (e.keyCode === arrowDown || e.keyCode === sKey) {
         downPressed = false;
     }
-}
+};
 
 const verifyRespawnTimeHasPassed = () => {
     let withinTenMillisecondsLessThanTimeBetweenRespawns = Date.now() - lastPringleSpawnTime > timeBetweenRespawns - tenPercentOfTimeBetweenRespawns;
@@ -192,7 +192,7 @@ const playCollisionSound = () => {
         crispSound.currentTime = 0;
     }
     
-}
+};
 
  const collision = async () => {
     incrementScore();
@@ -215,13 +215,13 @@ const updateIfPringleYValuesInFaceRange = () =>  {
         pringleArr[k].pringleLowerYValueInFaceRange = faceLowerYValue <= pringleLowerYValue && pringleLowerYValue <= faceUpperYValue;
         pringleArr[k].pringleUpperYValueInFaceRange = faceLowerYValue <= pringleUpperYValue && pringleUpperYValue <= faceUpperYValue;
     }
-}
+};
 
 const drawPringle = () => {
     for (let i = 0; i < pringleArr.length; i++) {
         ctx.drawImage(img, pringleArr[i].pringleCurrentXValue, pringleArr[i].pringleYValue, pringleWidth, pringleHeight);
     }
-}
+};
 
 const drawPringleEngine = () => {
     if (pringleTimeElapsed()) {
@@ -263,7 +263,7 @@ const playAgain = () => {
     backgroundMusic.play();
     resetGlobalStateToDefault();
     requestID = requestAnimationFrame(draw);
-}
+};
 
 const resetGlobalStateToDefault = () => {
     faceRadius = 20;
@@ -275,7 +275,7 @@ const resetGlobalStateToDefault = () => {
     timeBetweenRespawns = 1200;
     timeAtBeginningOfGame = Date.now();
     lastPringleSpawnTime = Date.now(); 
-}
+};
 
 const drawFace = () => {
     ctx.beginPath();
@@ -309,12 +309,12 @@ const draw = () => {
     if (animateAgain) {
         requestAnimationFrame(draw);
     }
-}
+};
 
 const assignFaceYValues = () => {
     faceUpperYValue =  faceY + faceRadius;
     faceLowerYValue = faceY - faceRadius;
-}
+};
 
 const toggleStartScreen = () => {
         startScreen.remove();
@@ -323,7 +323,11 @@ const toggleStartScreen = () => {
         lastPringleSpawnTime = Date.now(); 
         backgroundMusic.play();
         requestID = requestAnimationFrame(draw);
+<<<<<<< HEAD
 }
+=======
+};
+>>>>>>> master
     
 
 document.addEventListener('keydown', keyDownHandler, false);
