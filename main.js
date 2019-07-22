@@ -292,19 +292,19 @@ const draw = () => {
     
     if (upPressed === true ) {
         if (faceY - faceSpeed > canvasStartY + faceRadius) {
-            faceY -= faceSpeed;-
-            assignFaceYValues()
+            faceY -= faceSpeed;
+            assignFaceYValues();
         }
     }
     else if (downPressed === true ) {
         if (faceY + faceSpeed < canvasWidth - faceRadius) {
             faceY += faceSpeed;
-            assignFaceYValues() 
+            assignFaceYValues();
         } 
     }
 
     if (animateAgain) {
-        requestAnimationFrame(draw)
+        requestAnimationFrame(draw);
     }
 }
 
