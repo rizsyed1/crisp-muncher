@@ -6,6 +6,7 @@ const playAgainButton = document.querySelector('.play-again-button');
 const playButton = document.querySelector('.play-button');
 const oldScore = document.getElementById('scoreNumber');
 const scoreComponent = document.getElementById('score');
+const gameOverScoreDisplay = document.getElementById('gameOverScoreDisplay');
 
 // background music 
 const backgroundMusic = document.createElement('audio');
@@ -194,7 +195,7 @@ const playCollisionSound = () => {
     
 };
 
- const collision = async () => {
+const collision = async () => {
     incrementScore();
     pringleArr = pringleArr.slice(1)
     pringleSpeed += 0.3;
@@ -244,6 +245,7 @@ const drawPringleEngine = () => {
 const toggleModal = () => {
     modal.classList.toggle('show-modal');
     if(modal.className === 'modal show-modal') {
+        gameOverScoreDisplay.textContent = score;
         backgroundMusic.pause();
     }
     if (modal.className === 'modal') {
