@@ -196,7 +196,7 @@ const playCollisionSound = () => {
 
  const collision = async () => {
     incrementScore();
-    pringleArr.shift();
+    pringleArr = pringleArr.slice(1)
     pringleSpeed += 0.3;
     if (timeBetweenRespawns > 700){
         timeBetweenRespawns -= 50;
@@ -208,30 +208,26 @@ const playCollisionSound = () => {
     await playCollisionSound();
 };
 
-const updateIfPringleYValuesInFaceRange = () =>  {
-    for (let k = 0; k < pringleArr.length; k++) {
-        let pringleUpperYValue = pringleArr[k].pringleYValue + pringleHeight;
-        let pringleLowerYValue = pringleArr[k].pringleYValue;
-        pringleArr[k].pringleLowerYValueInFaceRange = faceLowerYValue <= pringleLowerYValue && pringleLowerYValue <= faceUpperYValue;
-        pringleArr[k].pringleUpperYValueInFaceRange = faceLowerYValue <= pringleUpperYValue && pringleUpperYValue <= faceUpperYValue;
-    }
+const updateIfPringleYValuesInFaceRange = (i) =>  {
+        let pringleUpperYValue = pringleArr[i].pringleYValue + pringleHeight;
+        let pringleLowerYValue = pringleArr[i].pringleYValue;
+        pringleArr[i].pringleLowerYValueInFaceRange = faceLowerYValue <= pringleLowerYValue && pringleLowerYValue <= faceUpperYValue;
+        pringleArr[i].pringleUpperYValueInFaceRange = faceLowerYValue <= pringleUpperYValue && pringleUpperYValue <= faceUpperYValue;
 };
 
-const drawPringle = () => {
-    for (let i = 0; i < pringleArr.length; i++) {
+const drawPringle = (i) => {
         ctx.drawImage(img, pringleArr[i].pringleCurrentXValue, pringleArr[i].pringleYValue, pringleWidth, pringleHeight);
-    }
 };
 
 const drawPringleEngine = () => {
     if (pringleTimeElapsed()) {
         spawnNewPringle();
     }
-    for (let j = 0; j < pringleArr.length; j++) {
+    for (let j = pringleArr.length - 1; j >= 0 ; j--) {
         if (pringleArr[j].pringleCurrentXValue > canvasStartX) {
             pringleArr[j].pringleCurrentXValue -= pringleSpeed;
-                drawPringle(); 
-                updateIfPringleYValuesInFaceRange();
+                drawPringle(j); 
+                updateIfPringleYValuesInFaceRange(j);
 
                 if (pringleArr[j].pringleCurrentXValue <= faceX + faceRadius && (pringleArr[j].pringleLowerYValueInFaceRange || pringleArr[j].pringleUpperYValueInFaceRange) ) {
                     collision();
