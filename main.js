@@ -323,12 +323,7 @@ const toggleStartScreen = () => {
         lastPringleSpawnTime = Date.now(); 
         backgroundMusic.play();
         requestID = requestAnimationFrame(draw);
-<<<<<<< HEAD
 }
-=======
-};
->>>>>>> master
-    
 
 document.addEventListener('keydown', keyDownHandler, false);
 document.addEventListener('keyup', keyUpHandler, false);
