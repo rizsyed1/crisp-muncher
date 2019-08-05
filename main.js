@@ -8,6 +8,9 @@ const oldScore = document.getElementById('scoreNumber');
 const scoreComponent = document.getElementById('score');
 const gameOverScoreDisplay = document.getElementById('gameOverScoreDisplay');
 
+// window load logic
+windowLoaded = false; 
+
 // background music 
 const backgroundMusic = document.createElement('audio');
 backgroundMusic.src = 'background-music.mp3';
@@ -17,6 +20,7 @@ backgroundMusic.style.display = 'none';
 backgroundMusic.volume = 0.6;
 document.body.appendChild(backgroundMusic);
 
+// canvas loaded
 let canvasLength = 520;
 let canvasWidth = 320; 
 let canvasStartX = 0;
@@ -35,6 +39,7 @@ let pringleStartingXValue = canvasLength + 60;
 let pringleSpeed = 4;
 let pringleArr = [];
 
+// button and animation logic
 let upPressed = false; 
 let downPressed = false;
 let animateAgain = true;
@@ -315,20 +320,25 @@ const assignFaceYValues = () => {
 };
 
 const toggleStartScreen = () => {
+    if (windowLoaded === true) {
         startScreen.remove();
         scoreComponent.classList.toggle('show-score');
         timeAtBeginningOfGame = Date.now();
         lastPringleSpawnTime = Date.now(); 
         backgroundMusic.play();
         requestID = requestAnimationFrame(draw);
-}
+    }
+    else{
+        setTimeout(toggleStartScreen, 2000)
+    }
+};
 
+const windowLoadedHandler = () => {
+    windowLoaded = true;
+}
 document.addEventListener('keydown', keyDownHandler, false);
 document.addEventListener('keyup', keyUpHandler, false);
+window.addEventListener('load', windowLoadedHandler)
 playAgainButton.addEventListener('click', toggleModal);
 playButton.addEventListener('click', toggleStartScreen);
-
-
-
-
 
