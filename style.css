@@ -21,6 +21,7 @@ body{
 
 .modal {
     position: fixed;
+    display: flex;
     left: 0;
     top: 0;
     width: 100%;
@@ -33,11 +34,6 @@ body{
     transform: scale(1.1);
     transition: visibility 0s linear 0.25s, opacity 0.25s 0s, transform 0.25s;
     text-align: center;
-}
-
-.modal-content {
-    position: absolute;
-    transform: translate(-50%, -50%);
 }
 
 .show-modal {
