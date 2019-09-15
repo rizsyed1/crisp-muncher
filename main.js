@@ -8,6 +8,9 @@ const oldScore = document.getElementById('scoreNumber');
 const scoreComponent = document.getElementById('score');
 const gameOverScoreDisplay = document.getElementById('gameOverScoreDisplay');
 
+//removed elements
+let removedCanvas; 
+
 // background music 
 const backgroundMusic = document.createElement('audio');
 backgroundMusic.src = 'background-music.mp3';
@@ -59,6 +62,7 @@ crispSound.setAttribute('controls', 'none');
 crispSound.style.display = 'none'; 
 document.body.appendChild(crispSound);
 
+// score
 let score = 0;
 
 // requestAnimationFrame ID
@@ -247,6 +251,7 @@ const drawPringleEngine = () => {
 const toggleModal = () => {
     modal.classList.toggle('show-modal');
     if(modal.className === 'modal show-modal') {
+        removedCanvas = document.body.removeChild(canvas);
         gameOverScoreDisplay.textContent = score;
         backgroundMusic.pause();
     }
@@ -256,6 +261,7 @@ const toggleModal = () => {
 };
 
 const playAgain = () => {
+    document.body.prepend(removedCanvas);
     score = 0;
     oldScore.textContent = score;
     animateAgain = true; 
