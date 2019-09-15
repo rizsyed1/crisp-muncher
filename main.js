@@ -1,12 +1,15 @@
 const canvas = document.getElementById('canvas');
+const loading = document.getElementById('loading');
 const ctx = canvas.getContext('2d');
 const modal = document.querySelector('.modal');
-const startScreen = document.querySelector('.starting-screen');
+let startScreen
 const playAgainButton = document.querySelector('.play-again-button');
-const playButton = document.querySelector('.play-button');
 const oldScore = document.getElementById('scoreNumber');
 const scoreComponent = document.getElementById('score');
 const gameOverScoreDisplay = document.getElementById('gameOverScoreDisplay');
+
+//removed elements
+let removedCanvas; 
 
 // background music 
 const backgroundMusic = document.createElement('audio');
@@ -59,6 +62,7 @@ crispSound.setAttribute('controls', 'none');
 crispSound.style.display = 'none'; 
 document.body.appendChild(crispSound);
 
+// score
 let score = 0;
 
 // requestAnimationFrame ID
@@ -247,6 +251,8 @@ const drawPringleEngine = () => {
 const toggleModal = () => {
     modal.classList.toggle('show-modal');
     if(modal.className === 'modal show-modal') {
+        removedCanvas = document.body.removeChild(canvas);
+        scoreComponent.classList.toggle('show-score');
         gameOverScoreDisplay.textContent = score;
         backgroundMusic.pause();
     }
@@ -256,6 +262,8 @@ const toggleModal = () => {
 };
 
 const playAgain = () => {
+    scoreComponent.classList.toggle('show-score');
+    document.body.prepend(removedCanvas);
     score = 0;
     oldScore.textContent = score;
     animateAgain = true; 
@@ -316,6 +324,7 @@ const assignFaceYValues = () => {
     faceLowerYValue = faceY - faceRadius;
 };
 
+
 const toggleStartScreen = () => {
     startScreen.remove();
     scoreComponent.classList.toggle('show-score');
@@ -325,8 +334,27 @@ const toggleStartScreen = () => {
     requestID = requestAnimationFrame(draw);
 };
 
+const launchStartScreen = () => {
+    loading.remove();
+    startScreen = document.createElement('div');
+    const startScreenTitle = document.createElement('h1');
+    const startScreenButton = document.createElement('button');
+    startScreenTitle.setAttribute('class', 'title');
+    startScreenButton.setAttribute('class', 'play-button');
+    startScreen.setAttribute('class', 'starting-screen');
+    const startScreenButtonText = document.createTextNode('Start Game');
+    const startScreenTitleText = document.createTextNode('CRISP MUNCHER');
+    startScreenTitle.appendChild(startScreenTitleText);
+    startScreenButton.appendChild(startScreenButtonText);
+    startScreen.appendChild(startScreenButton);
+    startScreen.appendChild(startScreenTitle);
+    document.body.appendChild(startScreen);
+    startScreenButton.addEventListener('click', toggleStartScreen);
+}
+
+window.onload = launchStartScreen
+
 
 document.addEventListener('keydown', keyDownHandler, false);
 document.addEventListener('keyup', keyUpHandler, false);
 playAgainButton.addEventListener('click', toggleModal);
-playButton.addEventListener('click', toggleStartScreen);

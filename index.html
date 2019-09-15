@@ -8,26 +8,22 @@
 </head>
 
 <body>
+    <h1 id='loading'>LOADING...</h1>
+
+    <canvas id='canvas' class='canvas' width='520' height='320'></canvas>
+
+    <div class='modal'>
+        <button type='button' class='play-again-button'>Play Again</button>
+        <div class='gameOverScoreDisplayContainer'>
+            <h1>Score: <span id='gameOverScoreDisplay'></span></h1>
+        </div>
+    </div>
+
     <span id='score' class='score'>Score: 
         <span id='scoreNumber' class='scoreNumber'>
             0
         </span>
     </span>
-
-    <canvas id='canvas' class='canvas' width='520' height='320'></canvas>
-
-    <div class='starting-screen show-starting-screen'>
-        <h1 class='title'>CRISP MUNCHER</h1>
-        <button class='play-button' type='button'>Start Game</button>
-    </div>
-
-    <div class='modal'>
-        <button type='button' class='play-again-button'>Play Again</button>
-        <div class='gameOverScoreDisplayContainer'>
-                <h1>Score: <span id='gameOverScoreDisplay'></span></h1>
-        </div>
-    </div>
-    
 
     <script src="./main.js"></script>
 </body>
