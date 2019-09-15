@@ -16,6 +16,7 @@ body{
     padding-right: 0;
     display: block;
     width: 800px;
+    margin: auto;
 }
 
 .modal {
