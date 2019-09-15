@@ -352,7 +352,11 @@ const launchStartScreen = () => {
     startScreenButton.addEventListener('click', toggleStartScreen);
 }
 
+<<<<<<< HEAD
 window.onload = launchStartScreen()
+=======
+window.onload = launchStartScreen
+>>>>>>> master
 
 
 document.addEventListener('keydown', keyDownHandler, false);
